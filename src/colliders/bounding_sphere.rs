@@ -21,7 +21,7 @@ impl BoundingSphere {
     #[allow(non_snake_case)]
     pub fn ZERO() -> Self {
         BoundingSphere {
-            centre: Vector3::ZERO(),
+            centre: Vector3::ZERO,
             radius: 0.0
         }
     }
@@ -65,7 +65,7 @@ impl BoundingSphere {
     #[allow(unused_assignments)]
     pub fn from_points(points: Vec<Vector3>) -> Self {
         if points.len() == 0 {
-            return BoundingSphere::new(Vector3::ZERO(), 0.0)
+            return BoundingSphere::new(Vector3::ZERO, 0.0)
         }
     
         // get the points with min and max x y and z values
@@ -221,7 +221,7 @@ impl Collider for BoundingSphere {
 
         let l = root_position - self.centre;
         if l.magnitude() <= self.radius {
-            return Some(RayHitInfo::new(root_position, 0.0, Vector3::ZERO()));
+            return Some(RayHitInfo::new(root_position, 0.0, Vector3::ZERO));
         }
 
         let a = direction.dot(direction);

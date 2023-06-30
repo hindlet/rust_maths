@@ -45,9 +45,9 @@ impl Matrix3 {
 
     pub const fn identity() -> Self {
         Matrix3 {
-            x: Vector3::X(),
-            y: Vector3::Y(),
-            z: Vector3::Z()
+            x: Vector3::X,
+            y: Vector3::Y,
+            z: Vector3::Z
         }
     }
 
@@ -133,7 +133,7 @@ impl Matrix3 {
 
     // calculates the euler angles required to create a specific matrix
     pub fn euler_angles_from(rot: Matrix3) -> Vector3 {
-        let mut angles = Vector3::ZERO();
+        let mut angles = Vector3::ZERO;
 
         // special cases
         if rot.z.x == 1.0{
