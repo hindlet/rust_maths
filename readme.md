@@ -8,3 +8,4 @@
 - Quicksort lists of items with another variable
 - 3d Vector and Matrix Maths
 - Collider and raycast maths
+- Normal Distribution probability density and cumulative distibution
