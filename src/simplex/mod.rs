@@ -1,4 +1,4 @@
-use super::{Vector3, Vector4, Vector2};
+use super::{Vector3, Vector4, Vector2, lerp};
 
 pub fn grad3(index: usize) -> Vector3{
 
@@ -150,5 +150,5 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
         noise_total += (2.0 * (t2 * t2) + (t2 * t2 * t2 * t2)) * grad3(gi2).xy().dot(offset3)
     }
 
-    noise_total
+    (noise_total + 1.0) / 2.0
 }
