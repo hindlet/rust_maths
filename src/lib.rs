@@ -12,8 +12,8 @@ mod simplex;
 pub use simplex::*;
 
 use std::f32::consts::{FRAC_2_SQRT_PI, SQRT_2, PI};
-
-
+pub use rand_chacha::{ChaChaRng, rand_core::SeedableRng};
+pub use rand::Rng;
 
 
 
