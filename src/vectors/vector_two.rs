@@ -36,8 +36,9 @@ impl Vector2 {
         self.y /= length;
     }
 
-    pub fn dot(vector_one: Vector2, vector_two: Vector2) -> f32{
-        vector_one.x * vector_two.x + vector_one.y * vector_two.y
+    pub fn dot(&self, rhs: impl Into<Vector2>) -> f32{
+        let rhs: Vector2 = rhs.into();
+        self.x * rhs.x + self.y * rhs.y
     }
 }
 
