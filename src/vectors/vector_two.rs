@@ -16,13 +16,7 @@ impl Vector2 {
         }
     }
 
-    #[allow(non_snake_case)]
-    pub const fn ZERO() -> Self {
-        Vector2 {
-            x: 0.0,
-            y: 0.0,
-        }
-    }
+    pub const ZERO: Vector2 = Vector2{x: 0.0, y: 0.0};
 
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y

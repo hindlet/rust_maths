@@ -22,51 +22,11 @@ impl Vector3 {
         }
     }
 
-    #[allow(non_snake_case)]
-    pub const fn Y() -> Self {
-        Self {
-            x: 0.0,
-            y: 1.0,
-            z: 0.0
-        }
-    }
-
-    #[allow(non_snake_case)]
-    pub const fn X() -> Self {
-        Self {
-            x: 1.0,
-            y: 0.0,
-            z: 0.0
-        }
-    }
-
-    #[allow(non_snake_case)]
-    pub const fn Z() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-            z: 1.0
-        }
-    }
-    
-    #[allow(non_snake_case)]
-    pub const fn ZERO() -> Self {
-        Self {
-            x: 0.0,
-            y: 0.0,
-            z: 0.0,
-        }
-    }
-
-    #[allow(non_snake_case)]
-    pub const fn ONE() -> Self {
-        Self {
-            x: 1.0,
-            y: 1.0,
-            z: 1.0,
-        }
-    }
-
+    pub const X: Vector3 = Vector3{x: 1.0, y: 0.0, z: 0.0};
+    pub const Y: Vector3 = Vector3{x: 0.0, y: 1.0, z: 0.0};
+    pub const Z: Vector3 = Vector3{x: 0.0, y: 0.0, z: 1.0};
+    pub const ZERO: Vector3 = Vector3{x: 0.0, y: 0.0, z: 0.0};
+    pub const ONE: Vector3 = Vector3{x: 1.0, y: 1.0, z: 1.0};
 
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z
@@ -180,20 +140,20 @@ impl Vector3 {
     pub fn direction_to_euler_angles(start_dir: impl Into<Vector3>) -> Vector3{
         let mut start_dir: Vector3 = start_dir.into();
         start_dir.normalise();
-        if start_dir == Vector3::Y() * -1.0 {
+        if start_dir == Vector3::Y * -1.0 {
             Vector3::new(PI, 0.0, 0.0)
-        } else if start_dir == Vector3::Y() {
-            Vector3::ZERO()
+        } else if start_dir == Vector3::Y {
+            Vector3::ZERO
         } else {
             let cross_mat = {
-                let cross = start_dir.cross(Vector3::Y());
+                let cross = start_dir.cross(Vector3::Y);
                 Matrix3::new(
                     0.0, -cross.z, cross.y,
                     cross.z, 0.0, -cross.x,
                     -cross.y, cross.x, 0.0
                 )
             };
-            let angle_cos = start_dir.dot(Vector3::Y());
+            let angle_cos = start_dir.dot(Vector3::Y);
             let rot_mat =  Matrix3::identity() + cross_mat + cross_mat * cross_mat * (1.0 / (1.0 + angle_cos));
             Matrix3::euler_angles_from(rot_mat)
         }
@@ -203,7 +163,7 @@ impl Vector3 {
     /// gets the approriate direction vector for given euler angles, where (0, 1, 0)direction is equivelant to (0, 0, 0)euler
     pub fn euler_angles_to_direction(rot: impl Into<Vector3>) -> Vector3 {
         let matrix = Matrix3::from_euler_angles(rot);
-        Vector3::Y().transform(matrix)
+        Vector3::Y.transform(matrix)
     }
 
     /// returns the directions of the different components of a direction vector: 
