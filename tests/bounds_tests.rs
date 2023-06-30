@@ -23,7 +23,7 @@ mod bounding_box_tests {
             Vector3{x: 0.0, y: 2.5, z:0.0},
             Vector3{x: 5.0, y: 1.5, z: 1.5},
         ];
-        let bounds = AABoundingBox::new(Vector3::ZERO(), Vector3::new(5.0, 2.5, 1.5));
+        let bounds = AABoundingBox::new(Vector3::ZERO, Vector3::new(5.0, 2.5, 1.5));
         assert_eq!(bounds.contains_points(points), true)
     }
 
@@ -81,15 +81,15 @@ mod bounding_box_tests {
 
     #[test]
     fn intersection_test() {
-        let box_one = AABoundingBox::new(Vector3::ZERO(), Vector3::ONE() * 5.0);
-        let box_two = AABoundingBox::new(Vector3::ONE() * 2.5, Vector3::ONE() * 5.0);
+        let box_one = AABoundingBox::new(Vector3::ZERO, Vector3::ONE * 5.0);
+        let box_two = AABoundingBox::new(Vector3::ONE * 2.5, Vector3::ONE * 5.0);
         assert_eq!(box_one.is_intersecting_box(box_two), true)
     }
 
     #[test]
     fn non_intersection_test() {
-        let box_one = AABoundingBox::new(Vector3::ZERO(), Vector3::ONE() * 2.0);
-        let box_two = AABoundingBox::new(Vector3::ONE() * 2.5, Vector3::ONE() * 5.0);
+        let box_one = AABoundingBox::new(Vector3::ZERO, Vector3::ONE * 2.0);
+        let box_two = AABoundingBox::new(Vector3::ONE * 2.5, Vector3::ONE * 5.0);
         assert_eq!(box_one.is_intersecting_box(box_two), false)
     }
 
@@ -164,7 +164,7 @@ mod bounding_sphere_tests {
     #[test]
     fn intersection_test() {
         let sphere_one = BoundingSphere {
-            centre: Vector3::ZERO(),
+            centre: Vector3::ZERO,
             radius: 5.0,
         };
         let sphere_two = BoundingSphere {
@@ -178,7 +178,7 @@ mod bounding_sphere_tests {
     #[test]
     fn touching_test() {
         let sphere_one = BoundingSphere {
-            centre: Vector3::ZERO(),
+            centre: Vector3::ZERO,
             radius: 5.0,
         };
         let sphere_two = BoundingSphere {
@@ -192,7 +192,7 @@ mod bounding_sphere_tests {
     #[test]
     fn non_intersection_test() {
         let sphere_one = BoundingSphere {
-            centre: Vector3::ZERO(),
+            centre: Vector3::ZERO,
             radius: 5.0,
         };
         let sphere_two = BoundingSphere {
@@ -206,7 +206,7 @@ mod bounding_sphere_tests {
     #[test]
     fn intersection_volume_test() {
         let sphere_one = BoundingSphere {
-            centre: Vector3::ZERO(),
+            centre: Vector3::ZERO,
             radius: 2.0,
         };
         let sphere_two = BoundingSphere {

@@ -23,6 +23,13 @@ impl Vector4 {
         }
     }
 
+    pub const X: Vector4 = Vector4{x: 1.0, y: 0.0, z: 0.0, w: 0.0};
+    pub const Y: Vector4 = Vector4{x: 0.0, y: 1.0, z: 0.0, w: 0.0};
+    pub const Z: Vector4 = Vector4{x: 0.0, y: 0.0, z: 1.0, w: 0.0};
+    pub const W: Vector4 = Vector4{x: 0.0, y: 0.0, z: 0.0, w: 1.0};
+    pub const ZERO: Vector4 = Vector4{x: 0.0, y: 0.0, z: 0.0, w: 0.0};
+    pub const ONE: Vector4 = Vector4{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
+
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w
     }

@@ -16,10 +16,11 @@ impl Vector3Int {
         }
     }
 
-    #[allow(non_snake_case)]
-    pub const fn Y() -> Self{
-        Vector3Int{x: 0, y: 1, z: 0}
-    }
+    pub const X: Vector3Int = Vector3Int{x: 1, y: 0, z: 0};
+    pub const Y: Vector3Int = Vector3Int{x: 0, y: 1, z: 0};
+    pub const Z: Vector3Int = Vector3Int{x: 0, y: 0, z: 1};
+    pub const ZERO: Vector3Int = Vector3Int{x: 0, y: 0, z: 0};
+    pub const ONE: Vector3Int = Vector3Int{x: 1, y: 1, z: 1};
 }
 
 

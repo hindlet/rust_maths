@@ -16,7 +16,10 @@ impl Vector2 {
         }
     }
 
+    pub const X: Vector2 = Vector2{x: 1.0, y: 0.0};
+    pub const Y: Vector2 = Vector2{x: 0.0, y: 1.0};
     pub const ZERO: Vector2 = Vector2{x: 0.0, y: 0.0};
+    pub const ONE: Vector2 = Vector2{x: 1.0, y: 1.0};
 
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y

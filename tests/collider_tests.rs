@@ -10,23 +10,23 @@ mod aabb_collider_tests {
     use super::{Vector3, AABoundingBox, Collider};
     #[test]
     fn perpendicular_intersection_test() {
-        let bounds = AABoundingBox::new(Vector3::ZERO(), Vector3::ONE() * 5.0);
-        let hit = bounds.check_ray([10, 2, 0], -Vector3::X(), Some(25.0)).unwrap();
+        let bounds = AABoundingBox::new(Vector3::ZERO, Vector3::ONE * 5.0);
+        let hit = bounds.check_ray([10, 2, 0], -Vector3::X, Some(25.0)).unwrap();
         assert_eq!(hit.hit_position, [5, 2, 0].into());
         assert_eq!(hit.hit_distance, 5.0);
     }
 
     #[test]
     fn contained_intersection_test() {
-        let bounds = AABoundingBox::new(Vector3::ZERO(), Vector3::ONE() * 5.0);
-        let hit = bounds.check_ray([3, 2, 0], -Vector3::X(), Some(25.0)).unwrap();
+        let bounds = AABoundingBox::new(Vector3::ZERO, Vector3::ONE * 5.0);
+        let hit = bounds.check_ray([3, 2, 0], -Vector3::X, Some(25.0)).unwrap();
         assert_eq!(hit.hit_position, [3, 2, 0].into());
         assert_eq!(hit.hit_distance, 0.0);
     }
 
     #[test]
     fn angled_test() {
-        let bounds = AABoundingBox::new(Vector3::ZERO(), Vector3::ONE() * 5.0);
+        let bounds = AABoundingBox::new(Vector3::ZERO, Vector3::ONE * 5.0);
         let hit = bounds.check_ray([8, 2, 0], [-1, 0, 1], Some(25.0)).unwrap();
         assert_eq!(hit.hit_position, [5.0, 2.0, 2.9999998].into()); // this should be (5, 2, 3) but due to rounding errors from floats the last number is lightly off, within acceptable range
         assert_eq!(hit.hit_distance, 3.0 * 2_f32.sqrt());
