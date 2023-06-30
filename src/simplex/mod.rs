@@ -1,19 +1,34 @@
 use super::{Vector3, Vector4, Vector2};
 
-const GRAD3: [Vector3; 12] = [
-    Vector3{x: 1.0, y: 1.0, z: 0.0},
-    Vector3{x: -1.0, y: 1.0, z: 0.0},
-    Vector3{x: 1.0, y: -1.0, z: 0.0},
-    Vector3{x: -1.0, y: -1.0, z: 0.0},
-    Vector3{x: 1.0, y: 0.0, z: 1.0},
-    Vector3{x: -1.0, y: 0.0, z: 1.0},
-    Vector3{x: 1.0, y: 0.0, z: -1.0},
-    Vector3{x: -1.0, y: 0.0, z: -1.0},
-    Vector3{x: 0.0, y: 1.0, z: 1.0},
-    Vector3{x: 0.0, y: -1.0, z: 1.0},
-    Vector3{x: 0.0, y: 1.0, z: -1.0},
-    Vector3{x: 0.0, y: -1.0, z: -1.0},
-];
+pub fn grad3(index: usize) -> Vector3{
+
+    const DIAG: f32 = std::f32::consts::FRAC_1_SQRT_2;
+    const DIAG2: f32 = 0.577_350_2;
+
+    match index % 32 {
+        0 | 12 => [DIAG, DIAG, 0.0].into(),
+        1 | 13 => [-DIAG, DIAG, 0.0].into(),
+        2 | 14 => [DIAG, -DIAG, 0.0].into(),
+        3 | 15 => [-DIAG, -DIAG, 0.0].into(),
+        4 | 16 => [DIAG, 0.0, DIAG].into(),
+        5 | 17 => [-DIAG, 0.0, DIAG].into(),
+        6 | 18 => [DIAG, 0.0, -DIAG].into(),
+        7 | 19 => [-DIAG, 0.0, -DIAG].into(),
+        8 | 20 => [0.0, DIAG, DIAG].into(),
+        9 | 21 => [0.0, -DIAG, DIAG].into(),
+        10 | 22 => [0.0, DIAG, -DIAG].into(),
+        11 | 23 => [0.0, -DIAG, -DIAG].into(),
+        24 => [DIAG2, DIAG2, DIAG2].into(),
+        25 => [-DIAG2, DIAG2, DIAG2].into(),
+        26 => [DIAG2, -DIAG2, DIAG2].into(),
+        27 => [-DIAG2, -DIAG2, DIAG].into(),
+        28 => [DIAG2, DIAG2, -DIAG2].into(),
+        29 => [-DIAG2, DIAG2, -DIAG2].into(),
+        30 => [DIAG2, -DIAG2, -DIAG2].into(),
+        31 => [-DIAG2, -DIAG2, -DIAG2].into(),
+        _ => panic!("Could not get gradient")
+    }
+}
 
 const GRAD4: [Vector4; 32] = [
     Vector4{x: 0.0, y: 1.0, z: 1.0, w: 1.0},
@@ -87,52 +102,53 @@ fn hash(to_hash: &[isize]) -> usize{
 
 
 pub fn simplex2d(x: f32, y: f32) -> f32 {
-    let coords = Vector2::new(x, y);
+    let point = Vector2::new(x, y);
+
+    let skew = skew_val(2);
+    let unskew = unskew_val(2);
 
     // skew to get simplex cell coords
-    let skew = (coords.x + coords.y) * skew_val(2);
-    let skew_coords = Vector2::new((x + skew).floor(), (y + skew).floor());
+    let skew = Vector2::ONE * (point.sum() * skew);
+    let cell = (point + skew).floor();
 
     // unskew to get those coords in 2d space
-    let unskew = (skew_coords.x + skew_coords.y) * unskew_val(2);
-    let unskew_coords = skew_coords - Vector2::ONE * unskew;
+    let unskew = Vector2::ONE * (cell.sum() * unskew_val(2));
+    let unskew_point = cell - unskew;
 
     // dist of cell coords from coord origin
-    let offset = coords - unskew_coords;
+    let offset1 = point - unskew_point;
 
     // figure out which simplex tri we're in
-    let mid_corner_tri = if offset.x > offset.y {Vector2::X} else {Vector2::Y};
+    let order = if offset1.x > offset1.y {Vector2::X} else {Vector2::Y};
 
     // corner offsets in 2d space
-    let mid_corner = offset -  mid_corner_tri + Vector2::ONE * unskew;
-    let last_corner = offset - Vector2::ONE + Vector2::ONE * 2.0 * unskew;
+    let offset2 = offset1 - order + unskew;
+    let offset3 = offset1 - Vector2::ONE + unskew * 2.0;
 
     // get hashed gradient indices
     // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
-    let gi0 = hash(&[skew_coords.x as isize, skew_coords.y as isize]) % 12;
-    let gi1_cell = skew_coords + mid_corner_tri;
-    let gi1 = hash(&[gi1_cell.x as isize, gi1_cell.y as isize]) % 12;
-    let gi2 = hash(&[skew_coords.x as isize + 1, skew_coords.y as isize + 1]) % 12;
+    let gi0 = hash(&[cell.x as isize, cell.y as isize]);
+    let gi1_cell = cell + order;
+    let gi1 = hash(&[gi1_cell.x as isize, gi1_cell.y as isize]);
+    let gi2 = hash(&[cell.x as isize + 1, cell.y as isize + 1]);
 
     // contributions from all three corners
-    let (mut contr_one, mut contr_two, mut contr_three) = (0.0, 0.0, 0.0);
+    let mut noise_total = 0.0;
 
-
-    let t0 = 1.0 - offset.sqr_magnitude() * 2.0;
-    if t0 >= 0.0 {
-        contr_one = (2.0 * (t0 * t0) + (t0 * t0 * t0 * t0)) * GRAD3[gi0].xy().dot(offset)
+    let t0 = 1.0 - offset1.sqr_magnitude() * 2.0;
+    if t0 > 0.0 {
+        noise_total += (2.0 * (t0 * t0) + (t0 * t0 * t0 * t0)) * grad3(gi0).xy().dot(offset1)
     }
 
-    let t1 = 1.0 - mid_corner.sqr_magnitude() * 2.0;
+    let t1 = 1.0 - offset2.sqr_magnitude() * 2.0;
     if t1 >= 0.0 {
-        contr_two = (2.0 * (t1 * t1) + (t1 * t1 * t1 * t1)) * GRAD3[gi1].xy().dot(mid_corner)
+        noise_total += (2.0 * (t1 * t1) + (t1 * t1 * t1 * t1)) * grad3(gi1).xy().dot(offset2)
     }
 
-    let t2 = 1.0 - last_corner.sqr_magnitude() * 2.0;
+    let t2 = 1.0 - offset3.sqr_magnitude() * 2.0;
     if t2 >= 0.0 {
-        contr_three = (2.0 * (t2 * t2) + (t2 * t2 * t2 * t2)) * GRAD3[gi2].xy().dot(last_corner)
+        noise_total += (2.0 * (t2 * t2) + (t2 * t2 * t2 * t2)) * grad3(gi2).xy().dot(offset3)
     }
 
-    // * 70 to scale from 0 to 1
-    contr_one + contr_two + contr_three
+    noise_total
 }
