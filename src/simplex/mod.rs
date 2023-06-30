@@ -109,6 +109,10 @@ fn unskew_val(dimension: u32) -> f32 {
 //     PERM[index]
 // }
 
+fn hash(hash: usize) -> usize {
+    PERM[hash % 256]
+}
+
 
 pub fn simplex2d(x: f32, y: f32) -> f32 {
     let point = Vector2::new(x, y);
@@ -136,10 +140,10 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
 
     // get hashed gradient indices
     // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
-    let gi0 = PERM[cell.x as usize + PERM[cell.y as usize]];
+    let gi0 = hash(cell.x as usize + hash(cell.y as usize));
     let gi1_cell = cell + order;
-    let gi1 = PERM[gi1_cell.x as usize + PERM[gi1_cell.y as usize]];
-    let gi2 = PERM[cell.x as usize + 1 + PERM[cell.y as usize + 1]];
+    let gi1 = hash(gi1_cell.x as usize + hash(gi1_cell.y as usize));
+    let gi2 = hash(cell.x as usize + 1 + hash(cell.y as usize + 1));
 
     // println!("{}, {}, {}", gi0, gi1, gi2);
     // println!("{:?} becomes {}", cell, gi0);
