@@ -172,6 +172,18 @@ impl Vector3 {
     pub fn direction_directions(&self) -> Vector3 {
         Vector3::new(self.x / self.x.abs(), self.y / self.y.abs(), self.z / self.z.abs())
     }
+
+    pub fn sum(&self) -> f32 {
+        self.x + self.y + self.z
+    }
+
+    pub fn floor(&self) -> Vector3 {
+        Vector3::new(self.x.floor(), self.y.floor(), self.z.floor())
+    }
+
+    pub fn to_isize_array(&self) -> [isize; 3] {
+        [self.x.round() as isize, self.y.round() as isize, self.y.round() as isize]
+    }
 }
 
 //////////////////////////////////////////////////////////////////

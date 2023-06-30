@@ -73,6 +73,10 @@ impl Vector4 {
             y: self.z
         }
     }
+
+    pub fn sum(&self) -> f32 {
+        self.x + self.y + self.z + self.w
+    }
 }
 
 impl Into<[f32; 4]> for Vector4 {

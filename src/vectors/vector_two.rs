@@ -40,6 +40,18 @@ impl Vector2 {
         let rhs: Vector2 = rhs.into();
         self.x * rhs.x + self.y * rhs.y
     }
+
+    pub fn sum(&self) -> f32 {
+        self.x + self.y
+    }
+
+    pub fn floor(&self) -> Vector2 {
+        Vector2::new(self.x.floor(), self.y.floor())
+    }
+
+    pub fn to_isize_array(&self) -> [isize; 2] {
+        [self.x.round() as isize, self.y.round() as isize]
+    }
 }
 
 //////////////////////////////////////////////////////////////////
