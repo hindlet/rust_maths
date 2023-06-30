@@ -7,6 +7,8 @@ pub use matrices::*;
 // colliders
 mod colliders;
 pub use colliders::*;
+// noise
+mod simplex;
 
 use std::f32::consts::{FRAC_2_SQRT_PI, SQRT_2, PI};
 
