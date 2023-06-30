@@ -150,5 +150,5 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
         noise_total += (2.0 * (t2 * t2) + (t2 * t2 * t2 * t2)) * grad3(gi2).xy().dot(offset3)
     }
 
-    (noise_total + 1.0) / 2.0
+    noise_total
 }
