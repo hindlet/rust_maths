@@ -1,33 +1,42 @@
-use super::{Vector3, Vector4, Vector2, lerp};
+use super::{Vector3, Vector4, Vector2};
 
-pub fn grad3(index: usize) -> Vector3{
+// pub fn grad3(index: usize) -> Vector3{
 
-    const DIAG: f32 = std::f32::consts::FRAC_1_SQRT_2;
-    const DIAG2: f32 = 0.577_350_2;
+//     const DIAG: f32 = std::f32::consts::FRAC_1_SQRT_2;
+//     const DIAG2: f32 = 0.577_350_2;
 
-    match index % 32 {
-        0 | 12 => [DIAG, DIAG, 0.0].into(),
-        1 | 13 => [-DIAG, DIAG, 0.0].into(),
-        2 | 14 => [DIAG, -DIAG, 0.0].into(),
-        3 | 15 => [-DIAG, -DIAG, 0.0].into(),
-        4 | 16 => [DIAG, 0.0, DIAG].into(),
-        5 | 17 => [-DIAG, 0.0, DIAG].into(),
-        6 | 18 => [DIAG, 0.0, -DIAG].into(),
-        7 | 19 => [-DIAG, 0.0, -DIAG].into(),
-        8 | 20 => [0.0, DIAG, DIAG].into(),
-        9 | 21 => [0.0, -DIAG, DIAG].into(),
-        10 | 22 => [0.0, DIAG, -DIAG].into(),
-        11 | 23 => [0.0, -DIAG, -DIAG].into(),
-        24 => [DIAG2, DIAG2, DIAG2].into(),
-        25 => [-DIAG2, DIAG2, DIAG2].into(),
-        26 => [DIAG2, -DIAG2, DIAG2].into(),
-        27 => [-DIAG2, -DIAG2, DIAG].into(),
-        28 => [DIAG2, DIAG2, -DIAG2].into(),
-        29 => [-DIAG2, DIAG2, -DIAG2].into(),
-        30 => [DIAG2, -DIAG2, -DIAG2].into(),
-        31 => [-DIAG2, -DIAG2, -DIAG2].into(),
-        _ => panic!("Could not get gradient")
-    }
+//     match index % 32 {
+//         0 | 12 => [DIAG, DIAG, 0.0].into(),
+//         1 | 13 => [-DIAG, DIAG, 0.0].into(),
+//         2 | 14 => [DIAG, -DIAG, 0.0].into(),
+//         3 | 15 => [-DIAG, -DIAG, 0.0].into(),
+//         4 | 16 => [DIAG, 0.0, DIAG].into(),
+//         5 | 17 => [-DIAG, 0.0, DIAG].into(),
+//         6 | 18 => [DIAG, 0.0, -DIAG].into(),
+//         7 | 19 => [-DIAG, 0.0, -DIAG].into(),
+//         8 | 20 => [0.0, DIAG, DIAG].into(),
+//         9 | 21 => [0.0, -DIAG, DIAG].into(),
+//         10 | 22 => [0.0, DIAG, -DIAG].into(),
+//         11 | 23 => [0.0, -DIAG, -DIAG].into(),
+//         24 => [DIAG2, DIAG2, DIAG2].into(),
+//         25 => [-DIAG2, DIAG2, DIAG2].into(),
+//         26 => [DIAG2, -DIAG2, DIAG2].into(),
+//         27 => [-DIAG2, -DIAG2, DIAG].into(),
+//         28 => [DIAG2, DIAG2, -DIAG2].into(),
+//         29 => [-DIAG2, DIAG2, -DIAG2].into(),
+//         30 => [DIAG2, -DIAG2, -DIAG2].into(),
+//         31 => [-DIAG2, -DIAG2, -DIAG2].into(),
+//         _ => panic!("Could not get gradient")
+//     }
+// }
+
+fn grad3(hash: usize, xy: Vector2) -> f32{
+    let h = hash & 0x3F;
+    let u = if h < 4 {xy.x} else {xy.y};
+    let v = if h < 4 {xy.y} else {xy.x};
+    let mut out = if h & 1 == 1 {-u} else {u};
+    if h & 2 == 2 {out += -2.0 * v} else {out += 2.0 * v};
+    out
 }
 
 const GRAD4: [Vector4; 32] = [
@@ -91,14 +100,14 @@ fn unskew_val(dimension: u32) -> f32 {
     (1.0 - (1.0 / (n + 1.0).sqrt())) / n
 }
 
-fn hash(to_hash: &[isize]) -> usize{
-    let index = to_hash
-        .iter()
-        .map(|&a| (a & 0xff) as usize)
-        .reduce(|a, b| PERM[a] ^ b)
-        .unwrap();
-    PERM[index]
-}
+// fn hash(to_hash: &[isize]) -> usize{
+//     let index = to_hash
+//         .iter()
+//         .map(|&a| (a & 0xff) as usize)
+//         .reduce(|a, b| PERM[a] ^ b)
+//         .unwrap();
+//     PERM[index]
+// }
 
 
 pub fn simplex2d(x: f32, y: f32) -> f32 {
@@ -112,7 +121,7 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
     let cell = (point + skew).floor();
 
     // unskew to get those coords in 2d space
-    let unskew = Vector2::ONE * (cell.sum() * unskew_val(2));
+    let unskew = Vector2::ONE * (cell.sum() * unskew);
     let unskew_point = cell - unskew;
 
     // dist of cell coords from coord origin
@@ -127,28 +136,31 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
 
     // get hashed gradient indices
     // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
-    let gi0 = hash(&[cell.x as isize, cell.y as isize]);
+    let gi0 = PERM[cell.x as usize + PERM[cell.y as usize]];
     let gi1_cell = cell + order;
-    let gi1 = hash(&[gi1_cell.x as isize, gi1_cell.y as isize]);
-    let gi2 = hash(&[cell.x as isize + 1, cell.y as isize + 1]);
+    let gi1 = PERM[gi1_cell.x as usize + PERM[gi1_cell.y as usize]];
+    let gi2 = PERM[cell.x as usize + 1 + PERM[cell.y as usize + 1]];
+
+    // println!("{}, {}, {}", gi0, gi1, gi2);
+    // println!("{:?} becomes {}", cell, gi0);
 
     // contributions from all three corners
     let mut noise_total = 0.0;
 
-    let t0 = 1.0 - offset1.sqr_magnitude() * 2.0;
+    let t0 = 0.5 - offset1.sqr_magnitude();
     if t0 > 0.0 {
-        noise_total += (2.0 * (t0 * t0) + (t0 * t0 * t0 * t0)) * grad3(gi0).xy().dot(offset1)
+        noise_total += t0.powi(4) * grad3(gi0, offset1);
     }
 
-    let t1 = 1.0 - offset2.sqr_magnitude() * 2.0;
+    let t1 = 0.5 - offset2.sqr_magnitude() ;
     if t1 >= 0.0 {
-        noise_total += (2.0 * (t1 * t1) + (t1 * t1 * t1 * t1)) * grad3(gi1).xy().dot(offset2)
+        noise_total += t1.powi(4) * grad3(gi1, offset2);
     }
 
-    let t2 = 1.0 - offset3.sqr_magnitude() * 2.0;
+    let t2 = 0.5 - offset3.sqr_magnitude();
     if t2 >= 0.0 {
-        noise_total += (2.0 * (t2 * t2) + (t2 * t2 * t2 * t2)) * grad3(gi2).xy().dot(offset3)
+        noise_total += t2.powi(4) * grad3(gi2, offset3);
     }
 
-    noise_total
+    ((noise_total + 0.020488156) * 20.74804805).clamp(0.0, 1.0)
 }
