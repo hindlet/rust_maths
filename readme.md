@@ -9,3 +9,5 @@
 - 3d Vector and Matrix Maths
 - Collider and raycast maths
 - Normal Distribution probability density and cumulative distibution
+- Simplex Noise (currently 2d, 3d and 4d to come)
+- Imports of rand_chacha for seeded rng
