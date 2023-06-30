@@ -90,6 +90,15 @@ fn unskew_val(dimension: u32) -> f32 {
     (1.0 - (1.0 / (n + 1.0).sqrt())) / n
 }
 
+fn hash(to_hash: &[isize]) -> usize{
+    let index = to_hash
+        .iter()
+        .map(|&a| (a & 0xff) as usize)
+        .reduce(|a, b| PERM[a] ^ b)
+        .unwrap();
+    PERM[index]
+}
+
 
 pub fn simplex2d(x: f32, y: f32) -> f32 {
     let coords = Vector2::new(x, y);
@@ -114,31 +123,30 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
 
     // get hashed gradient indices
     // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
-    let i = (skew_coords.x as i32 & 255) as usize;
-    let j = (skew_coords.y as i32 & 255) as usize;
-    let gi0 = PERM[i + PERM[j]] % 12;
-    let gi1 = PERM[i + mid_corner_tri.x as usize + PERM[j + mid_corner_tri.y as usize]] % 12;
-    let gi2 = PERM[i + 1 + PERM[j + 1]] % 12;
+    let gi0 = hash(&[skew_coords.x as isize, skew_coords.y as isize]) % 12;
+    let gi1_cell = skew_coords + mid_corner_tri;
+    let gi1 = hash(&[gi1_cell.x as isize, gi1_cell.y as isize]) % 12;
+    let gi2 = hash(&[skew_coords.x as isize + 1, skew_coords.y as isize + 1]) % 12;
 
     // contributions from all three corners
     let (mut contr_one, mut contr_two, mut contr_three) = (0.0, 0.0, 0.0);
 
 
-    let t0 = 0.5 - offset.dot(offset);
+    let t0 = 1.0 - offset.sqr_magnitude() * 2.0;
     if t0 >= 0.0 {
-        contr_one = t0.powi(4) * GRAD3[gi0].xy().dot(offset)
+        contr_one = (2.0 * (t0 * t0) + (t0 * t0 * t0 * t0)) * GRAD3[gi0].xy().dot(offset)
     }
 
-    let t1 = 0.5 - mid_corner.dot(mid_corner);
+    let t1 = 1.0 - mid_corner.sqr_magnitude() * 2.0;
     if t1 >= 0.0 {
-        contr_two = t1.powi(4) * GRAD3[gi1].xy().dot(mid_corner)
+        contr_two = (2.0 * (t1 * t1) + (t1 * t1 * t1 * t1)) * GRAD3[gi1].xy().dot(mid_corner)
     }
 
-    let t2 = 0.5 - last_corner.dot(last_corner);
+    let t2 = 1.0 - last_corner.sqr_magnitude() * 2.0;
     if t2 >= 0.0 {
-        contr_three = t2.powi(4) * GRAD3[gi2].xy().dot(last_corner)
+        contr_three = (2.0 * (t2 * t2) + (t2 * t2 * t2 * t2)) * GRAD3[gi2].xy().dot(last_corner)
     }
 
     // * 70 to scale from 0 to 1
-    70.0 * (contr_one + contr_two + contr_three)
+    contr_one + contr_two + contr_three
 }
