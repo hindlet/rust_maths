@@ -50,7 +50,7 @@ const GRAD4: [Vector4; 32] = [
     Vector4{x: -1.0, y: -1.0, z: -1.0, w: 0.0},
 ];
 
-const PERM: [i32; 512] = [
+const PERM: [usize; 512] = [
     151,160,137,91,90,15,
     131,13,201,95,96,53,194,233,7,225,140,36,103,30,69,142,8,99,37,240,21,10,23,
     190,6,148,247,120,234,75,0,26,197,62,94,252,219,203,117,35,11,32,57,177,33,
@@ -103,40 +103,39 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
     let unskew_coords = skew_coords - Vector2::ONE * unskew;
 
     // dist of cell coords from coord origin
-    let dist_coords = coords - unskew_coords;
+    let offset = coords - unskew_coords;
 
     // figure out which simplex tri we're in
-    let mid_corner_tri = if dist_coords.x > dist_coords.y {Vector2::X} else {Vector2::Y};
+    let mid_corner_tri = if offset.x > offset.y {Vector2::X} else {Vector2::Y};
 
     // corner offsets in 2d space
-    let mid_corner = dist_coords -  mid_corner_tri + Vector2::ONE * unskew;
-    let last_corner = dist_coords - Vector2::ONE + Vector2::ONE * 2.0 * unskew;
+    let mid_corner = offset -  mid_corner_tri + Vector2::ONE * unskew;
+    let last_corner = offset - Vector2::ONE + Vector2::ONE * 2.0 * unskew;
 
     // get hashed gradient indices
     // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
     let i = (skew_coords.x as i32 & 255) as usize;
     let j = (skew_coords.y as i32 & 255) as usize;
-    let gi0 = (PERM[i + PERM[j] as usize] % 12) as usize;
-    let gi1 = (PERM[i + mid_corner_tri.x as usize + PERM[j + mid_corner_tri.y as usize] as usize] % 12) as usize;
-    let gi2 = (PERM[i + 1 + PERM[j + 1] as usize] % 12) as usize;
+    let gi0 = PERM[i + PERM[j]] % 12;
+    let gi1 = PERM[i + mid_corner_tri.x as usize + PERM[j + mid_corner_tri.y as usize]] % 12;
+    let gi2 = PERM[i + 1 + PERM[j + 1]] % 12;
 
     // contributions from all three corners
     let (mut contr_one, mut contr_two, mut contr_three) = (0.0, 0.0, 0.0);
 
-    // I didn't use >= here as it would be zero anyway
 
-    let t0 = 0.5 - dist_coords.dot(dist_coords);
-    if t0 > 0.0 {
-        contr_one = t0.powi(4) * GRAD3[gi0].xy().dot(dist_coords)
+    let t0 = 0.5 - offset.dot(offset);
+    if t0 >= 0.0 {
+        contr_one = t0.powi(4) * GRAD3[gi0].xy().dot(offset)
     }
 
     let t1 = 0.5 - mid_corner.dot(mid_corner);
-    if t1 > 0.0 {
+    if t1 >= 0.0 {
         contr_two = t1.powi(4) * GRAD3[gi1].xy().dot(mid_corner)
     }
 
     let t2 = 0.5 - last_corner.dot(last_corner);
-    if t2 > 0.0 {
+    if t2 >= 0.0 {
         contr_three = t2.powi(4) * GRAD3[gi2].xy().dot(last_corner)
     }
 
