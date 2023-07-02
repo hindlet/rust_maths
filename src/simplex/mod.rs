@@ -153,9 +153,9 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
     let y2 = y0 - 1.0 + 2.0 * unskew;
 
     // get hashed gradient indices
-    let gi0 = hash(i + hash(j));
-    let gi1 = hash(i + i1 + hash(j + j1));
-    let gi2 = hash(i + 1 + hash(j + 1));
+    let gi0 = hash(i + hash(j)) % 12;
+    let gi1 = hash(i + i1 + hash(j + j1)) % 12;
+    let gi2 = hash(i + 1 + hash(j + 1)) % 12;
 
 
     let mut t0 = 0.5 - x0 * x0 - y0 * y0;
