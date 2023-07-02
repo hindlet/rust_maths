@@ -19,8 +19,12 @@ pub use rand::Rng;
 
 
 
-pub fn lerp(start: f32, end: f32, position: f32) -> f32{
-    start + (end - start) * position.clamp(0.0, 1.0)
+pub fn lerp(min: f32, max: f32, position: f32) -> f32{
+    min + (max - min) * position.clamp(0.0, 1.0)
+}
+
+pub fn inverse_lerp(min: f32, max: f32, value: f32) -> f32 {
+    ((value - min) / (max - min)).clamp(0.0, 1.0)
 }
 
 
