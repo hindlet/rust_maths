@@ -115,7 +115,7 @@ fn unskew_val(dimension: u32) -> f32 {
 // }
 
 fn hash(hash: u32) -> u32 {
-    PERM[(hash & 255) as usize]
+    PERM[hash as usize]
 }
 
 
@@ -158,9 +158,9 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
     // get hashed gradient indices
     let ii = i & 255;
     let jj = j & 255;
-    let gi0 = hash(ii + hash(jj)) % 12;
-    let gi1 = hash(ii + i1 + hash(jj + j1)) % 12;
-    let gi2 = hash(ii + 1 + hash(jj + 1)) % 12;
+    let gi0 = hash(ii + hash(jj));
+    let gi1 = hash(ii + i1 + hash(jj + j1));
+    let gi2 = hash(ii + 1 + hash(jj + 1));
 
 
     let mut t0 = 0.5 - x0 * x0 - y0 * y0;
