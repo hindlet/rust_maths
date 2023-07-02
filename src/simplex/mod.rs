@@ -118,9 +118,12 @@ fn hash(hash: usize) -> u8 {
 
 pub fn simplex2d(x: f32, y: f32) -> f32 {
     let point = Vector2::new(x, y);
+    let (n0, n1, n2): (f32, f32, f32);
 
     let skew = skew_val(2);
     let unskew = unskew_val(2);
+
+    println!("{}, {}", skew, unskew);
 
     // skew to get simplex cell coords
     let skew = Vector2::ONE * (point.sum() * skew);
