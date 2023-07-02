@@ -1,4 +1,4 @@
-use super::{Vector3, Vector4, Vector2};
+use super::{Vector4};
 
 // pub fn grad3(index: usize) -> Vector3{
 
@@ -30,10 +30,10 @@ use super::{Vector3, Vector4, Vector2};
 //     }
 // }
 
-fn grad3(hash: u8, xy: Vector2) -> f32{
+fn grad3(hash: u32, x: f32, y: f32) -> f32{
     let h = hash & 0x3F;
-    let u = if h < 4 {xy.x} else {xy.y};
-    let v = if h < 4 {xy.y} else {xy.x};
+    let u = if h < 4 {x} else {y};
+    let v = if h < 4 {y} else {x};
     let mut out = if h & 1 == 1 {-u} else {u};
     if h & 2 == 2 {out += -2.0 * v} else {out += 2.0 * v};
     out
@@ -74,7 +74,7 @@ const GRAD4: [Vector4; 32] = [
     Vector4{x: -1.0, y: -1.0, z: -1.0, w: 0.0},
 ];
 
-const PERM: [u8; 256] = [
+const PERM: [u32; 256] = [
     151, 160, 137, 91, 90, 15,
     131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
     190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
@@ -111,65 +111,76 @@ fn unskew_val(dimension: u32) -> f32 {
 //     PERM[index]
 // }
 
-fn hash(hash: usize) -> u8 {
-    PERM[hash % 256]
+fn hash(hash: u32) -> u32 {
+    PERM[(hash % 256) as usize]
 }
 
 
 pub fn simplex2d(x: f32, y: f32) -> f32 {
-    let point = Vector2::new(x, y);
     let (n0, n1, n2): (f32, f32, f32);
 
     let skew = skew_val(2);
     let unskew = unskew_val(2);
 
-    println!("{}, {}", skew, unskew);
-
     // skew to get simplex cell coords
-    let skew = Vector2::ONE * (point.sum() * skew);
-    let cell = (point + skew).floor();
+    let s = (x + y) * skew;
+    let xs = x + s;
+    let ys = y + s;
+    let i: u32 = xs.floor() as u32;
+    let j: u32 = ys.floor() as u32;
 
     // unskew to get those coords in 2d space
-    let unskew = Vector2::ONE * (cell.sum() * unskew);
-    let unskew_point = cell - unskew;
-
-    // dist of cell coords from coord origin
-    let offset1 = point - unskew_point;
+    let t = (i + j) as f32 * unskew;
+    let x0_1 = i as f32 - t;
+    let y0_1 = j as f32 - t;
+    let x0 = x - x0_1;
+    let y0 = y - y0_1;
 
     // figure out which simplex tri we're in
-    let order = if offset1.x > offset1.y {Vector2::X} else {Vector2::Y};
+    let (i1, j1): (u32, u32);
+    if x0 > y0 {
+        i1 = 1;
+        j1 = 0;
+    } else {
+        i1 = 0;
+        j1 = 1;
+    }
 
     // corner offsets in 2d space
-    let offset2 = offset1 - order + unskew;
-    let offset3 = offset1 - Vector2::ONE + unskew * 2.0;
+    let x1 = x0 - i1 as f32 + unskew;
+    let y1 = y0 - j1 as f32 + unskew;
+    let x2 = x0 - 1.0 + 2.0 * unskew;
+    let y2 = y0 - 1.0 + 2.0 * unskew;
 
     // get hashed gradient indices
-    // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
-    let gi0 = hash(cell.x as usize + hash(cell.y as usize) as usize);
-    let gi1_cell = cell + order;
-    let gi1 = hash(gi1_cell.x as usize + hash(gi1_cell.y as usize) as usize);
-    let gi2 = hash(cell.x as usize + 1 + hash(cell.y as usize + 1) as usize);
+    let gi0 = hash(i + hash(j));
+    let gi1 = hash(i + i1 + hash(j + j1));
+    let gi2 = hash(i + 1 + hash(j + 1));
 
-    // println!("{}, {}, {}", gi0, gi1, gi2);
-    // println!("{:?} becomes {}", cell, gi0);
 
-    // contributions from all three corners
-    let mut noise_total = 0.0;
-
-    let t0 = 0.5 - offset1.sqr_magnitude();
-    if t0 > 0.0 {
-        noise_total += t0.powi(4) * grad3(gi0, offset1);
+    let mut t0 = 0.5 - x0 * x0 - y0 * y0;
+    if t0 < 0.0 {
+        n0 = 0.0;
+    } else {
+        t0 *= t0;
+        n0 = t0 * t0 * grad3(gi0, x0, y0);
     }
 
-    let t1 = 0.5 - offset2.sqr_magnitude() ;
-    if t1 >= 0.0 {
-        noise_total += t1.powi(4) * grad3(gi1, offset2);
+    let mut t1 = 0.5 - x1 * x1 - y1 * y1;
+    if t1 < 0.0 {
+        n1 = 0.0;
+    } else {
+        t1 *= t1;
+        n1 = t1 * t1 * grad3(gi1, x1, y1);
     }
 
-    let t2 = 0.5 - offset3.sqr_magnitude();
-    if t2 >= 0.0 {
-        noise_total += t2.powi(4) * grad3(gi2, offset3);
+    let mut t2 = 0.5 - x2 * x2 - y2 * y2;
+    if t2 < 0.0 {
+        n2 = 0.0;
+    } else {
+        t2 *= t2;
+        n2 = t2 * t2 * grad3(gi2, x2, y2);
     }
 
-    ((noise_total + 0.020488156) * 20.74804805).clamp(0.0, 1.0)
+    45.23065 * (n0 + n1 + n2)
 }
