@@ -30,7 +30,7 @@ use super::{Vector3, Vector4, Vector2};
 //     }
 // }
 
-fn grad3(hash: usize, xy: Vector2) -> f32{
+fn grad3(hash: u8, xy: Vector2) -> f32{
     let h = hash & 0x3F;
     let u = if h < 4 {xy.x} else {xy.y};
     let v = if h < 4 {xy.y} else {xy.x};
@@ -74,7 +74,7 @@ const GRAD4: [Vector4; 32] = [
     Vector4{x: -1.0, y: -1.0, z: -1.0, w: 0.0},
 ];
 
-const PERM: [usize; 256] = [
+const PERM: [u8; 256] = [
     151, 160, 137, 91, 90, 15,
     131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
     190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
@@ -111,7 +111,7 @@ fn unskew_val(dimension: u32) -> f32 {
 //     PERM[index]
 // }
 
-fn hash(hash: usize) -> usize {
+fn hash(hash: usize) -> u8 {
     PERM[hash % 256]
 }
 
@@ -142,10 +142,10 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
 
     // get hashed gradient indices
     // its fine to use as i32 as we floored those numbers earlier or we know they are whole intsw
-    let gi0 = hash(cell.x as usize + hash(cell.y as usize));
+    let gi0 = hash(cell.x as usize + hash(cell.y as usize) as usize);
     let gi1_cell = cell + order;
-    let gi1 = hash(gi1_cell.x as usize + hash(gi1_cell.y as usize));
-    let gi2 = hash(cell.x as usize + 1 + hash(cell.y as usize + 1));
+    let gi1 = hash(gi1_cell.x as usize + hash(gi1_cell.y as usize) as usize);
+    let gi2 = hash(cell.x as usize + 1 + hash(cell.y as usize + 1) as usize);
 
     // println!("{}, {}, {}", gi0, gi1, gi2);
     // println!("{:?} becomes {}", cell, gi0);
