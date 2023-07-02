@@ -1,6 +1,6 @@
 use super::{Vector4, Vector3};
 
-pub fn grad3(index: u32) -> Vector3{
+pub fn grad3(index: i32) -> Vector3{
 
     match index % 12 {
         0 => [1, 1, 0].into(),
@@ -63,7 +63,7 @@ const GRAD4: [Vector4; 32] = [
     Vector4{x: -1.0, y: -1.0, z: -1.0, w: 0.0},
 ];
 
-const PERM: [u32; 512] = [
+const PERM: [i32; 512] = [
     151, 160, 137, 91, 90, 15,
     131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103, 30, 69, 142, 8, 99, 37, 240, 21, 10, 23,
     190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94, 252, 219, 203, 117, 35, 11, 32, 57, 177, 33,
@@ -114,7 +114,7 @@ fn unskew_val(dimension: u32) -> f32 {
 //     PERM[index]
 // }
 
-fn hash(hash: u32) -> u32 {
+fn hash(hash: i32) -> i32 {
     PERM[hash as usize]
 }
 
@@ -129,8 +129,8 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
     let s = (x + y) * skew;
     let xs = x + s;
     let ys = y + s;
-    let i: u32 = xs.floor() as u32;
-    let j: u32 = ys.floor() as u32;
+    let i: i32 = xs.floor() as i32;
+    let j: i32 = ys.floor() as i32;
 
     // unskew to get those coords in 2d space
     let t = (i + j) as f32 * unskew;
@@ -140,7 +140,7 @@ pub fn simplex2d(x: f32, y: f32) -> f32 {
     let y0 = y - y0_1;
 
     // figure out which simplex tri we're in
-    let (i1, j1): (u32, u32);
+    let (i1, j1): (i32, i32);
     if x0 > y0 {
         i1 = 1;
         j1 = 0;
