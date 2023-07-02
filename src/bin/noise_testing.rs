@@ -8,8 +8,10 @@ fn main() {
     let mut min = f32::MAX;
 
     // runs a lot of simplex noise to find the max and min
-    for _ in 0..1000000 {
-        let val = simplex2d(rng.gen(), rng.gen());
+    for _ in 0..200 {
+        let (x, y) = (rng.gen::<f32>() * 10000.0, rng.gen::<f32>() * 10000.0);
+        let val = simplex2d(x, y);
+        println!("{}, {}: {}", x, y, val);
         if val > max {max = val}
         if val < min {min = val}
     }

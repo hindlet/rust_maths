@@ -112,7 +112,7 @@ fn unskew_val(dimension: u32) -> f32 {
 // }
 
 fn hash(hash: u32) -> u32 {
-    PERM[(hash as u8) as usize]
+    PERM[(hash & 255) as usize]
 }
 
 
