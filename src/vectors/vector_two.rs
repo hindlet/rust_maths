@@ -29,6 +29,17 @@ impl Vector2 {
         self.sqr_magnitude().sqrt()
     }
 
+
+    pub fn normalised(&self) -> Vector2{
+        let length = self.magnitude();
+
+        Vector2::new(
+            self.x / length,
+            self.y / length,
+        )
+    }
+
+
     pub fn normalise(&mut self){
         let length = self.magnitude();
 
