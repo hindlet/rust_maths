@@ -120,6 +120,25 @@ impl SubAssign for Vector2 {
     }
 }
 
+impl Mul for Vector2 {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y
+        }
+    }
+}
+
+impl MulAssign for Vector2 {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = Self{
+            x: self.x * rhs.x,
+            y: self.y * rhs.y
+        }
+    }
+}
+
 impl Mul<f32> for Vector2 {
     type Output = Self;
     fn mul(self, rhs: f32) -> Self::Output {
@@ -135,6 +154,25 @@ impl MulAssign<f32> for Vector2 {
         *self = Self {
             x: self.x * rhs,
             y: self.y * rhs,
+        }
+    }
+}
+
+impl Div for Vector2 {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y
+        }
+    }
+}
+
+impl DivAssign for Vector2 {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = Self{
+            x: self.x / rhs.x,
+            y: self.y / rhs.y
         }
     }
 }
