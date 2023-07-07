@@ -69,7 +69,7 @@ impl Collider for TriangleCollider {
         } // ray is parallel to triangle
 
         let f = 1.0 / a;
-        let s = root_position - self.points.c1();
+        let s = root_position - self.points.c0();
         let u = f * s.dot(h);
 
         if (u < 0.0) || (u > 1.0) {
