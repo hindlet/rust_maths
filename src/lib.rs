@@ -10,22 +10,13 @@ pub use colliders::*;
 // noise
 mod simplex;
 pub use simplex::*;
+// interpolation
+mod interpolation;
+pub use interpolation::*;
 
 use std::f32::consts::{FRAC_2_SQRT_PI, SQRT_2, PI};
 pub use rand_chacha::{ChaChaRng, rand_core::SeedableRng};
 pub use rand::Rng;
-
-
-
-
-
-pub fn lerp(min: f32, max: f32, position: f32) -> f32{
-    min + (max - min) * position.clamp(0.0, 1.0)
-}
-
-pub fn inverse_lerp(min: f32, max: f32, value: f32) -> f32 {
-    ((value - min) / (max - min)).clamp(0.0, 1.0)
-}
 
 
 const ROOT_TWOPI: f32 = SQRT_2 * (FRAC_2_SQRT_PI * PI / 2.0); // sqrt(2.0 * PI)
