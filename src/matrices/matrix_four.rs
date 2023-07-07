@@ -1,9 +1,9 @@
 #![allow(dead_code)]
 use super::super::vectors::Vector4;
-use super::matrix_three::Matrix3;
+use super::*;
 use std::ops::*;
 
-#[derive(Default, Clone, Copy, Debug, PartialEq)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Matrix4 {
     pub x: Vector4, 
     pub y: Vector4,
@@ -12,26 +12,68 @@ pub struct Matrix4 {
 }
 
 impl Matrix4 {
+    pub const IDENTITY: Matrix4 = Matrix4 {
+        x: Vector4::X,
+        y: Vector4::Y,
+        z: Vector4::Z,
+        w: Vector4::W
+    };
+
+    pub const ONE: Matrix4 = Matrix4 {
+        x: Vector4::ONE,
+        y: Vector4::ONE,
+        z: Vector4::ONE,
+        w: Vector4::ONE
+    };
+
+    pub const EPSILON: Matrix4 = Matrix4 {
+        x: Vector4::EPSILON,
+        y: Vector4::EPSILON,
+        z: Vector4::EPSILON,
+        w: Vector4::EPSILON
+    };
+
     pub fn new(
-        c0r0: f32, c0r1: f32, c0r2: f32, c0r3: f32,
-        c1r0: f32, c1r1: f32, c1r2: f32, c1r3: f32,
-        c2r0: f32, c2r1: f32, c2r2: f32, c2r3: f32,
-        c3ro: f32, c3r1: f32, c3r2: f32, c3r3: f32,
-    ) -> Self {
-        Self {
-            x: Vector4::new(c0r0, c0r1, c0r2, c0r3),
-            y: Vector4::new(c1r0, c1r1, c1r2, c1r3),
-            z: Vector4::new(c2r0, c2r1, c2r2, c2r3),
-            w: Vector4::new(c3ro, c3r1, c3r2, c3r3)
+        r0c0: f32, r0c1: f32, r0c2: f32, r0c3: f32,
+        r1c0: f32, r1c1: f32, r1c2: f32, r1c3: f32,
+        r2c0: f32, r2c1: f32, r2c2: f32, r2c3: f32,
+        r3c0: f32, r3c1: f32, r3c2: f32, r3c3: f32,
+    ) -> Matrix4 {
+        Matrix4 {
+            x: Vector4::new(r0c0, r0c1, r0c2, r0c3),
+            y: Vector4::new(r1c0, r1c1, r1c2, r1c3),
+            z: Vector4::new(r2c0, r2c1, r2c2, r2c3),
+            w: Vector4::new(r3c0, r3c1, r3c2, r3c3)
         }
     }
 
-    pub fn from_cols(x: Vector4, y: Vector4, z: Vector4, w: Vector4) -> Self {
-        Self {x, y, z, w}
+    pub fn c0(&self) -> Vector4 {
+        [self.x.x, self.y.x, self.z.x, self.w.x].into()
+    }
+
+    pub fn c1(&self) -> Vector4 {
+        [self.x.y, self.y.y, self.z.y, self.w.y].into()
+    }
+
+    pub fn c2(&self) -> Vector4 {
+        [self.x.z, self.y.z, self.z.z, self.w.z].into()
+    }
+
+    pub fn c3(&self) -> Vector4 {
+        [self.x.w, self.y.w, self.z.w, self.w.w].into()
+    }
+
+    pub fn from_rows(x: impl Into<Vector4>, y: impl Into<Vector4>, z: impl Into<Vector4>, w: impl Into<Vector4>) -> Matrix4 {
+        Matrix4 {
+            x: x.into(),
+            y: y.into(),
+            z: z.into(),
+            w: w.into()
+        }
     }
 
     /// creates a perspective matrix for the specified settings, based on the opengl implementation
-    pub fn persective_matrix(fovy: f32, aspect: f32, znear: f32, zfar: f32) -> Self {
+    pub fn persective_matrix(fovy: f32, aspect: f32, znear: f32, zfar: f32) -> Matrix4 {
         let f = 1.0 / (fovy / 2.0).tan();
         Matrix4::new(
             f / aspect, 0.0, 0.0, 0.0,
@@ -60,20 +102,45 @@ impl From<Matrix3> for Matrix4 {
     }
 }
 
+impl From<Matrix2> for Matrix4 {
+    fn from(value: Matrix2) -> Self {
+        Matrix3::from(value).into()
+    }
+}
+
 
 impl Mul for Matrix4 {
     type Output = Matrix4;
     fn mul(self, rhs: Self) -> Self::Output {
-        let a = self.x;
-        let b = self.y;
-        let c = self.z;
-        let d = self.w;
+        Matrix4::new(
+            self.x.dot(rhs.c0()), self.x.dot(rhs.c1()), self.x.dot(rhs.c2()), self.x.dot(rhs.c3()),
+            self.y.dot(rhs.c0()), self.y.dot(rhs.c1()), self.y.dot(rhs.c2()), self.y.dot(rhs.c3()),
+            self.z.dot(rhs.c0()), self.z.dot(rhs.c1()), self.z.dot(rhs.c2()), self.z.dot(rhs.c3()),
+            self.w.dot(rhs.c0()), self.w.dot(rhs.c1()), self.w.dot(rhs.c2()), self.w.dot(rhs.c3())
+        )
+    }
+}
 
-        Matrix4::from_cols(
-            a*rhs.x.x + b*rhs.x.y + c*rhs.x.z + d*rhs.x.w,
-            a*rhs.y.x + b*rhs.y.y + c*rhs.y.z + d*rhs.y.w,
-            a*rhs.z.x + b*rhs.z.y + c*rhs.z.z + d*rhs.z.w,
-            a*rhs.w.x + b*rhs.w.y + c*rhs.w.z + d*rhs.w.w,
+impl Mul<f32> for Matrix4 {
+    type Output = Matrix4;
+    fn mul(self, rhs: f32) -> Self::Output {
+        Matrix4::from_rows(
+            self.x * rhs,
+            self.y * rhs,
+            self.z * rhs,
+            self.w * rhs
+        )
+    }
+}
+
+impl Mul<Vector4> for Matrix4 {
+    type Output = Vector4;
+    fn mul(self, rhs: Vector4) -> Self::Output {
+        Vector4::new(
+            self.x.dot(rhs),
+            self.y.dot(rhs),
+            self.z.dot(rhs),
+            self.w.dot(rhs)
         )
     }
 }

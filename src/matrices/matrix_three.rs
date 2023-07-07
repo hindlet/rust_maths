@@ -1,8 +1,9 @@
 #![allow(dead_code)]
 use super::super::vectors::Vector3;
+use super::*;
 use std::{ops::*, f32::consts::PI};
 
-#[derive(Default, Clone, Copy, Debug, PartialEq)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Matrix3 {
     pub x: Vector3, 
     pub y: Vector3,
@@ -10,6 +11,24 @@ pub struct Matrix3 {
 }
 
 impl Matrix3 {
+    pub const IDENTITY: Matrix3 = Matrix3 {
+        x: Vector3::X,
+        y: Vector3::Y,
+        z: Vector3::Z
+    };
+
+    pub const ONE: Matrix3 = Matrix3 {
+        x: Vector3::ONE,
+        y: Vector3::ONE,
+        z: Vector3::ONE
+    };
+
+    pub const EPSILON: Matrix3 = Matrix3 {
+        x: Vector3::EPSILON,
+        y: Vector3::EPSILON,
+        z: Vector3::EPSILON,
+    };
+
     pub fn new(
         r0c0: f32, r0c1: f32 , r0c2: f32,
         r1c0: f32, r1c1: f32 , r1c2: f32,
@@ -40,26 +59,18 @@ impl Matrix3 {
         c2: impl Into<Vector3>,
     ) -> Self {
         let mat = Matrix3::from_rows(c0, c1, c2);
-        mat.transpose()
+        mat.transposed()
     }
 
-    pub const fn identity() -> Self {
-        Matrix3 {
-            x: Vector3::X,
-            y: Vector3::Y,
-            z: Vector3::Z
-        }
-    }
-
-    pub fn c1(&self) -> Vector3 {
+    pub fn c0(&self) -> Vector3 {
         Vector3::new(self.x.x, self.y.x, self.z.x)
     }
 
-    pub fn c2(&self) -> Vector3 {
+    pub fn c1(&self) -> Vector3 {
         Vector3::new(self.x.y, self.y.y, self.z.y)
     }
 
-    pub fn c3(&self) -> Vector3 {
+    pub fn c2(&self) -> Vector3 {
         Vector3::new(self.x.z, self.y.z, self.z.z)
     }
 
@@ -95,7 +106,7 @@ impl Matrix3 {
     pub fn from_angle_and_axis(angle: f32, axis: impl Into<Vector3>) -> Self {
         let mut axis: Vector3 = axis.into();
         axis.normalise();
-        if angle == 0.0 {return Matrix3::identity();}
+        if angle == 0.0 {return Matrix3::IDENTITY;}
         Matrix3::new(
             angle.cos() + axis.x.powi(2) * (1.0 - angle.cos()),
             axis.x * axis.y * (1.0 - angle.cos()) - axis.z * angle.sin(),
@@ -169,16 +180,12 @@ impl Matrix3 {
         )
     }
 
-    pub fn transpose(&self) -> Matrix3{
+    pub fn transposed(&self) -> Matrix3{
         Matrix3::new(
             self.x.x, self.y.x, self.z.x,
             self.x.y, self.y.y, self.z.y,
             self.x.z, self.y.z, self.z.z
         )
-    }
-
-    pub fn transpose_self(&mut self) {
-
     }
 
     // returns the determinant of a given matrix
@@ -201,23 +208,25 @@ impl Matrix3 {
 }
 
 
+impl From<Matrix2> for Matrix3 {
+    fn from(value: Matrix2) -> Self {
+        Matrix3::new(
+            value.x.x, value.x.y, 0.0,
+            value.y.x, value.y.y, 0.0,
+            0.0, 0.0, 1.0
+        )
+    }
+}
+
 
 impl Mul for Matrix3 {
     type Output = Matrix3;
     fn mul(self, rhs: Self) -> Self::Output {
 
         Matrix3::new(
-            self.x.x * rhs.x.x + self.x.y * rhs.y.x + self.x.z * rhs.z.x,
-            self.x.x * rhs.x.y + self.x.y * rhs.y.y + self.x.z * rhs.z.y,
-            self.x.x * rhs.x.z + self.x.y * rhs.y.z + self.x.z * rhs.z.z,
-
-            self.y.x * rhs.x.x + self.y.y * rhs.y.x + self.y.z * rhs.z.x,
-            self.y.x * rhs.x.y + self.y.y * rhs.y.y + self.y.z * rhs.z.y,
-            self.y.x * rhs.x.z + self.y.y * rhs.y.z + self.y.z * rhs.z.z,
-
-            self.z.x * rhs.x.x + self.z.y * rhs.y.x + self.z.z * rhs.z.x,
-            self.z.x * rhs.x.y + self.z.y * rhs.y.y + self.z.z * rhs.z.y,
-            self.z.x * rhs.x.z + self.z.y * rhs.y.z + self.z.z * rhs.z.z,
+            self.x.dot(rhs.c0()), self.x.dot(rhs.c1()), self.x.dot(rhs.c2()),
+            self.y.dot(rhs.c0()), self.y.dot(rhs.c1()), self.y.dot(rhs.c2()),
+            self.z.dot(rhs.c0()), self.z.dot(rhs.c1()), self.z.dot(rhs.c2()),
         )
     }
 }
@@ -230,6 +239,29 @@ impl Add for Matrix3 {
             self.y + rhs.y,
             self.z + rhs.z
         )
+    }
+}
+
+impl Sub for Matrix3 {
+    type Output = Matrix3;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Matrix3::from_rows(
+            self.x - rhs.x,
+            self.y - rhs.y,
+            self.z - rhs.z
+        )
+    }
+}
+
+
+
+impl Mul<Vector3> for Matrix3 {
+    type Output = Vector3;
+    fn mul(self, rhs: Vector3) -> Self::Output {
+        let x = rhs.dot(self.x);
+        let y = rhs.dot(self.y);
+        let z = rhs.dot(self.z);
+        Vector3::new(x, y, z)
     }
 }
 
