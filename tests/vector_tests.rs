@@ -17,7 +17,7 @@ mod vector_three_tests {
             0.0, 0.0, 1.0
         );
         let point = Vector3::new(2.102, 1.65, 1.195);
-        assert_eq!(point.transform(mat), Vector3::new(2.6531748, -0.3184836, 1.195))
+        assert_eq!(mat * point, Vector3::new(2.6531748, -0.3184836, 1.195))
     }
 
     #[test]

@@ -7,7 +7,7 @@ use std::f32::consts::PI;
 
 #[cfg(test)]
 mod matrix_tests {
-    use super::{Vector3, Matrix3, PI};
+    use super::*;
 
     #[test]
     fn euler_angles_x_test() {
@@ -32,13 +32,10 @@ mod matrix_tests {
 
     #[test]
     fn euler_angles_all_test() {
-        let angles = Vector3::new(PI, PI, PI);
+        let from_angles = Matrix3::from_euler_angles([PI, PI, PI]);
+        let from_multiply = Matrix3::from_angle_x(PI) * Matrix3::from_angle_y(PI) * Matrix3::from_angle_z(PI);
 
-        // these are functionally the same, but there is a tiny difference in rounding, so they will not be equal
-        //
-        // left: `Matrix3 { x: Vector3 { x: 1.0, y: -8.742278e-8, z: -8.742278e-8 }, y: Vector3 { x: 8.742277e-8, y: 1.0, z: -8.742278e-8 }, z: Vector3 { x: 8.7422784e-8, y: 8.742277e-8, z: 1.0 } }`,
-        // right: `Matrix3 { x: Vector3 { x: 1.0, y: -8.7422784e-8, z: -8.742277e-8 }, y: Vector3 { x: 8.742278e-8, y: 1.0, z: -8.7422784e-8 }, z: Vector3 { x: 8.742278e-8, y: 8.742278e-8, z: 1.0 } }
-        assert_ne!(Matrix3::from_angle_x(PI) * Matrix3::from_angle_y(PI) * Matrix3::from_angle_z(PI), Matrix3::from_euler_angles(angles))
+        assert!(from_multiply - Matrix3::EPSILON <= from_angles && from_multiply + Matrix3::EPSILON >= from_angles);
     }
 
     #[test]
@@ -85,22 +82,22 @@ mod matrix_tests {
     }
 
     #[test]
-    fn invert_test() {
-        let mat = Matrix3::new(
+    fn invert_tests() {
+        let mat2 = Matrix2::new(
+            2.0, 5.0,
+            -4.0, 2.0
+        );
+        let resmat2 = mat2.inverted() * mat2;
+        let mat3 = Matrix3::new(
             3.0, 4.0, 6.0,
             7.0, 8.0, 9.0,
             2.0, 1.0, 3.0
         );
+        let resmat3 = mat3.inverted() * mat3;
 
-        assert_eq!(
-            mat.inverted(),
-            Matrix3::new(
-                -5.0 / 7.0, 2.0 / 7.0, 4.0 / 7.0,
-                1.0 / 7.0, 1.0 / 7.0, -5.0 / 7.0,
-                3.0 / 7.0, -5.0 / 21.0, 4.0 / 21.0
-            )
-        )
-    }
+        assert!(Matrix2::IDENTITY - Matrix2::EPSILON <= resmat2 && Matrix2::IDENTITY + Matrix2::EPSILON >= resmat2);
+        assert!(Matrix3::IDENTITY - Matrix3::EPSILON <= resmat3 && Matrix3::IDENTITY + Matrix3::EPSILON >= resmat3);
+    } 
 
     #[test]
     fn axis_angle_test() {
@@ -113,6 +110,17 @@ mod matrix_tests {
             -0.70710677, 0.70710677, 0.0,
             0.0, 0.0, 1.0
         ))
+    }
+
+    #[test]
+    fn identity_tests() {
+        let vector2 = Vector2::new(15.0, 6.7);
+        let vector3 = Vector3::new(56.7, 125.5, 197.2);
+        let vector4 = Vector4::new(653.0, 56.8, 328.5, 674.6);
+
+        assert_eq!(Matrix2::IDENTITY * vector2, vector2);
+        assert_eq!(Matrix3::IDENTITY * vector3, vector3);
+        assert_eq!(Matrix4::IDENTITY * vector4, vector4)
     }
 
 }

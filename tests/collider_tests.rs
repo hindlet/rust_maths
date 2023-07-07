@@ -28,7 +28,8 @@ mod aabb_collider_tests {
     fn angled_test() {
         let bounds = AABoundingBox::new(Vector3::ZERO, Vector3::ONE * 5.0);
         let hit = bounds.check_ray([8, 2, 0], [-1, 0, 1], Some(25.0)).unwrap();
-        assert_eq!(hit.hit_position, [5.0, 2.0, 2.9999998].into()); // this should be (5, 2, 3) but due to rounding errors from floats the last number is lightly off, within acceptable range
+        let expected_hit: Vector3 = [5, 2, 3].into();
+        assert!(expected_hit - Vector3::EPSILON <= hit.hit_position && expected_hit + Vector3::EPSILON >= hit.hit_position);
         assert_eq!(hit.hit_distance, 3.0 * 2_f32.sqrt());
     }
 
@@ -36,7 +37,7 @@ mod aabb_collider_tests {
     fn zero_height_test() {
         let bounds = AABoundingBox::new([-10, 0, -10], [10, 0, 10]);
         let hit = bounds.check_ray([0, 10, 0], [0, -1, 0], Some(25.0)).unwrap();
-        assert_eq!(hit.hit_position, [0, 0, 0].into()); // this should be (5, 2, 3) but due to rounding errors from floats the last number is lightly off, within acceptable range
+        assert_eq!(hit.hit_position, [0, 0, 0].into());
         assert_eq!(hit.hit_distance, 10.0);
     }
 }

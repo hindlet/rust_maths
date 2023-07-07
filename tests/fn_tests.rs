@@ -4,10 +4,10 @@ use std::f32::EPSILON;
 
 #[test]
 fn normal_dist_tests() {
-    assert!(0.048394144 - EPSILON < normal_probabilty_density(7.0, 12.0, 5.0) && normal_probabilty_density(7.0, 12.0, 5.0) < 0.048394144 + EPSILON);
-    assert!(0.017205188 - EPSILON < normal_probabilty_density(56.0, 70.0, 15.0) && normal_probabilty_density(56.0, 70.0, 15.0) < 0.017205188 + EPSILON);
-    assert!(0.002215924 - EPSILON < normal_probabilty_density(24.0, 18.0, 2.0) && normal_probabilty_density(24.0, 18.0, 2.0) < 0.002215924 + EPSILON);
-    assert!(0.056068762 - EPSILON < normal_probabilty_density(19.2, 15.0, 5.0) && normal_probabilty_density(19.2, 15.0, 5.0) < 0.056068762 + EPSILON);
+    assert!(0.048394144 - EPSILON <= normal_probabilty_density(7.0, 12.0, 5.0) && normal_probabilty_density(7.0, 12.0, 5.0) <= 0.048394144 + EPSILON);
+    assert!(0.017205188 - EPSILON <= normal_probabilty_density(56.0, 70.0, 15.0) && normal_probabilty_density(56.0, 70.0, 15.0) <= 0.017205188 + EPSILON);
+    assert!(0.002215924 - EPSILON <= normal_probabilty_density(24.0, 18.0, 2.0) && normal_probabilty_density(24.0, 18.0, 2.0) <= 0.002215924 + EPSILON);
+    assert!(0.056068762 - EPSILON <= normal_probabilty_density(19.2, 15.0, 5.0) && normal_probabilty_density(19.2, 15.0, 5.0) <= 0.056068762 + EPSILON);
 }
 
 #[test]
@@ -26,6 +26,17 @@ fn lerp_tests() {
     assert_eq!(lerp(1.0, 3.0, 0.25), 1.5);
 }
 
+#[test]
+fn bilerp_tests() {
+    let val = bilerp([5.0, 4.0, 3.0, 6.0], (0.1, 0.7));
+    let long_val = long_bilerp(5.0, 4.0, 3.0, 6.0, (0.1, 0.7));
+    assert!(long_val - EPSILON <= val && long_val + EPSILON >= val)
+}
+
+fn long_bilerp(min: f32, maxx: f32, maxy: f32, max: f32, position: (f32, f32)) -> f32 {
+    let (x, y) = (position.0.clamp(0.0, 1.0), position.1.clamp(0.0, 1.0));
+    min * (1.0 - x) * (1.0 - y) + maxx * x * (1.0 - y) + maxy * (1.0 - x) * y + max * x * y
+}
 
 #[cfg(test)]
 mod quicksort_tests {
