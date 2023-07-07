@@ -2,6 +2,7 @@
 use super::vector_two::Vector2;
 use super::super::matrices::Matrix3;
 use std::f32::consts::PI;
+use std::f32::EPSILON;
 use std::ops::*;
 const HALF_PI: f32 = PI / 2.0;
 
@@ -14,6 +15,13 @@ pub struct Vector3 {
 
 
 impl Vector3 {
+    pub const X: Vector3 = Vector3{x: 1.0, y: 0.0, z: 0.0};
+    pub const Y: Vector3 = Vector3{x: 0.0, y: 1.0, z: 0.0};
+    pub const Z: Vector3 = Vector3{x: 0.0, y: 0.0, z: 1.0};
+    pub const ZERO: Vector3 = Vector3{x: 0.0, y: 0.0, z: 0.0};
+    pub const ONE: Vector3 = Vector3{x: 1.0, y: 1.0, z: 1.0};
+    pub const EPSILON: Vector3 = Vector3{x: EPSILON, y: EPSILON, z: EPSILON};
+
     pub fn new(x: f32, y: f32, z: f32) -> Self {
         Vector3 {
             x,
@@ -21,12 +29,7 @@ impl Vector3 {
             z,
         }
     }
-
-    pub const X: Vector3 = Vector3{x: 1.0, y: 0.0, z: 0.0};
-    pub const Y: Vector3 = Vector3{x: 0.0, y: 1.0, z: 0.0};
-    pub const Z: Vector3 = Vector3{x: 0.0, y: 0.0, z: 1.0};
-    pub const ZERO: Vector3 = Vector3{x: 0.0, y: 0.0, z: 0.0};
-    pub const ONE: Vector3 = Vector3{x: 1.0, y: 1.0, z: 1.0};
+    
 
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z
@@ -109,21 +112,6 @@ impl Vector3 {
         return (self.dot(rhs)/(self.magnitude() * rhs.magnitude())).acos();
     }
 
-
-    pub fn transform(&self, transform: Matrix3) -> Vector3 {
-        let x = self.dot(transform.x);
-        let y = self.dot(transform.y);
-        let z = self.dot(transform.z);
-        Vector3::new(x, y, z)
-    }
-
-    pub fn mut_transform(&mut self, transform: Matrix3) {
-        let new = self.transform(transform);
-        self.x = new.x;
-        self.y = new.y;
-        self.z = new.z;
-    }
-
     pub fn xy(&self) -> Vector2 {
         Vector2::new(self.x, self.y)
     }
@@ -154,7 +142,7 @@ impl Vector3 {
                 )
             };
             let angle_cos = start_dir.dot(Vector3::Y);
-            let rot_mat =  Matrix3::identity() + cross_mat + cross_mat * cross_mat * (1.0 / (1.0 + angle_cos));
+            let rot_mat =  Matrix3::IDENTITY + cross_mat + cross_mat * cross_mat * (1.0 / (1.0 + angle_cos));
             Matrix3::euler_angles_from(rot_mat)
         }
 
@@ -163,7 +151,7 @@ impl Vector3 {
     /// gets the approriate direction vector for given euler angles, where (0, 1, 0)direction is equivelant to (0, 0, 0)euler
     pub fn euler_angles_to_direction(rot: impl Into<Vector3>) -> Vector3 {
         let matrix = Matrix3::from_euler_angles(rot);
-        Vector3::Y.transform(matrix)
+        matrix * Vector3::Y
     }
 
     /// returns the directions of the different components of a direction vector: 

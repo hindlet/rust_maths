@@ -1,9 +1,10 @@
 #![allow(dead_code)]
 use super::vector_two::Vector2;
+use std::f32::EPSILON;
 use std::ops::*;
 
 
-#[derive(Default, Clone, Copy, Debug, PartialEq)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Vector4 {
     pub x: f32, 
     pub y: f32,
@@ -14,6 +15,14 @@ pub struct Vector4 {
 
 
 impl Vector4 {
+    pub const X: Vector4 = Vector4{x: 1.0, y: 0.0, z: 0.0, w: 0.0};
+    pub const Y: Vector4 = Vector4{x: 0.0, y: 1.0, z: 0.0, w: 0.0};
+    pub const Z: Vector4 = Vector4{x: 0.0, y: 0.0, z: 1.0, w: 0.0};
+    pub const W: Vector4 = Vector4{x: 0.0, y: 0.0, z: 0.0, w: 1.0};
+    pub const ZERO: Vector4 = Vector4{x: 0.0, y: 0.0, z: 0.0, w: 0.0};
+    pub const ONE: Vector4 = Vector4{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
+    pub const EPSILON: Vector4 = Vector4{x: EPSILON, y: EPSILON, z: EPSILON, w: EPSILON};
+
     pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Vector4 {
             x,
@@ -22,13 +31,6 @@ impl Vector4 {
             w,
         }
     }
-
-    pub const X: Vector4 = Vector4{x: 1.0, y: 0.0, z: 0.0, w: 0.0};
-    pub const Y: Vector4 = Vector4{x: 0.0, y: 1.0, z: 0.0, w: 0.0};
-    pub const Z: Vector4 = Vector4{x: 0.0, y: 0.0, z: 1.0, w: 0.0};
-    pub const W: Vector4 = Vector4{x: 0.0, y: 0.0, z: 0.0, w: 1.0};
-    pub const ZERO: Vector4 = Vector4{x: 0.0, y: 0.0, z: 0.0, w: 0.0};
-    pub const ONE: Vector4 = Vector4{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
 
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y + self.z * self.z + self.w * self.w

@@ -1,7 +1,8 @@
 use std::ops::*;
+use std::f32::EPSILON;
 
 
-#[derive(Default, Clone, Copy, Debug, PartialEq)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Vector2 {
     pub x: f32, 
     pub y: f32,
@@ -9,6 +10,12 @@ pub struct Vector2 {
 
 
 impl Vector2 {
+    pub const X: Vector2 = Vector2{x: 1.0, y: 0.0};
+    pub const Y: Vector2 = Vector2{x: 0.0, y: 1.0};
+    pub const ZERO: Vector2 = Vector2{x: 0.0, y: 0.0};
+    pub const ONE: Vector2 = Vector2{x: 1.0, y: 1.0};
+    pub const EPSILON: Vector2 = Vector2{x: EPSILON, y: EPSILON};
+
     pub fn new(x: f32, y: f32) -> Self {
         Vector2 {
             x,
@@ -16,10 +23,6 @@ impl Vector2 {
         }
     }
 
-    pub const X: Vector2 = Vector2{x: 1.0, y: 0.0};
-    pub const Y: Vector2 = Vector2{x: 0.0, y: 1.0};
-    pub const ZERO: Vector2 = Vector2{x: 0.0, y: 0.0};
-    pub const ONE: Vector2 = Vector2{x: 1.0, y: 1.0};
 
     pub fn sqr_magnitude(&self) -> f32 {
         self.x * self.x + self.y * self.y
@@ -39,7 +42,6 @@ impl Vector2 {
         )
     }
 
-
     pub fn normalise(&mut self){
         let length = self.magnitude();
 
@@ -47,18 +49,22 @@ impl Vector2 {
         self.y /= length;
     }
 
+
     pub fn dot(&self, rhs: impl Into<Vector2>) -> f32{
         let rhs: Vector2 = rhs.into();
         self.x * rhs.x + self.y * rhs.y
     }
 
+
     pub fn sum(&self) -> f32 {
         self.x + self.y
     }
 
+
     pub fn floor(&self) -> Vector2 {
         Vector2::new(self.x.floor(), self.y.floor())
     }
+
 
     pub fn to_isize_array(&self) -> [isize; 2] {
         [self.x.round() as isize, self.y.round() as isize]
