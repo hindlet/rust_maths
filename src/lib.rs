@@ -16,7 +16,7 @@ pub use interpolation::*;
 
 use std::f32::consts::{FRAC_2_SQRT_PI, SQRT_2, PI};
 pub use rand_chacha::{ChaChaRng, rand_core::SeedableRng};
-pub use rand::Rng;
+pub use rand::{Rng, thread_rng};
 
 
 const ROOT_TWOPI: f32 = SQRT_2 * (FRAC_2_SQRT_PI * PI / 2.0); // sqrt(2.0 * PI)

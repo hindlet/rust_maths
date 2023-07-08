@@ -1,8 +1,7 @@
 use rust_maths::*;
-use rand::Rng;
 
 fn main() {
-    let mut rng = rand::thread_rng();
+    let mut rng = thread_rng();
 
     let mut max = f32::MIN;
     let mut min = f32::MAX;
