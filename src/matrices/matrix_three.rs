@@ -253,8 +253,6 @@ impl Sub for Matrix3 {
     }
 }
 
-
-
 impl Mul<Vector3> for Matrix3 {
     type Output = Vector3;
     fn mul(self, rhs: Vector3) -> Self::Output {
