@@ -1,11 +1,19 @@
 #![allow(dead_code)]
 use super::vector_two::Vector2;
 use super::super::matrices::Matrix3;
-use std::f32::consts::PI;
+use std::{f32::consts::PI, cmp::Ordering};
 use std::f32::EPSILON;
 use std::ops::*;
 const HALF_PI: f32 = PI / 2.0;
 
+
+/// Due to how the partialeq and partialord methods were auto implemented, I opted for a certain ordering for vector 3s
+/// 
+/// - If and only if the x components of the vectors are the same, the y components are checked
+/// - If and only if the y components of the vectors are the same, the z components are checked
+/// - If and only if the z components of the vectors are the same, they are equal
+/// - If the values differ at any of these steps, the ordering of the components at that step is taken
+/// 
 #[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Vector3 {
     pub x: f32, 
@@ -171,6 +179,71 @@ impl Vector3 {
 
     pub fn to_isize_array(&self) -> [isize; 3] {
         [self.x.round() as isize, self.y.round() as isize, self.y.round() as isize]
+    }
+}
+
+impl Eq for Vector3 {}
+
+/// ordering notes
+
+impl Ord for Vector3 {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        let (x, y, z): (i32, i32, i32);
+        if (self.x - other.x).abs() < 1.17549435e-36f32 {
+            x = 0;
+        } else if self.x - other.x > 0.0 {
+            x = 1;
+        } else if self.x - other.x < 0.0 {
+            x = -1;
+        } else {
+            x = 0;
+        }
+
+        if (self.y - other.y).abs() < 1.17549435e-36f32 {
+            y = 0;
+        } else if self.y - other.y > 0.0 {
+            y = 1;
+        } else if self.y - other.y < 0.0 {
+            y = -1;
+        } else {
+            y = 0;
+        }
+
+        if (self.z - other.z).abs() < 1.17549435e-36f32 {
+            z = 0;
+        } else if self.z - other.z > 0.0 {
+            z = 1;
+        } else if self.z - other.z < 0.0 {
+            z = -1;
+        } else {
+            z = 0;
+        }
+
+        if x > 0 {
+            Ordering::Greater
+        }
+        else if x < 0 {
+            Ordering::Less
+        }
+        else {
+            if y > 0 {
+                Ordering::Greater
+            }
+            else if y < 0 {
+                Ordering::Less
+            }
+            else {
+                if z > 0 {
+                    Ordering::Greater
+                }
+                else if z < 0 {
+                    Ordering::Less
+                }
+                else {
+                    Ordering::Equal
+                }
+            }
+        }
     }
 }
 

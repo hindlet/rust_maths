@@ -24,4 +24,16 @@ mod vector_three_tests {
     fn cross_test() {
         assert_eq!(Vector3::new(0.0, 0.0, 1.0).cross([1, 0 ,0]), Vector3::new(0.0, 1.0, 0.0))
     }
+
+    #[test]
+    fn ordering_tests() {
+        assert!(Vector3::X * 5.0 > Vector3::X);
+
+        assert!(Vector3::X > Vector3::Y);
+        assert!(Vector3::Y > Vector3::Z);
+        assert!(Vector3::X > Vector3::Y + Vector3::Z);
+        assert_eq!(Vector3::X, Vector3::X);
+        assert!(Vector3::X < Vector3::X + Vector3::Y);
+        assert!(Vector3::X + Vector3::Y < Vector3::X + Vector3::Y + Vector3::Z);
+    }
 }
