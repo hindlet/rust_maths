@@ -8,8 +8,8 @@ pub use matrices::*;
 mod colliders;
 pub use colliders::*;
 // noise
-mod simplex;
-pub use simplex::*;
+mod noise;
+pub use noise::*;
 // interpolation
 mod interpolation;
 pub use interpolation::*;
