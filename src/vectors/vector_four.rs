@@ -1,5 +1,5 @@
 #![allow(dead_code)]
-use super::vector_two::Vector2;
+use super::{Vector2, Vector3};
 use std::f32::EPSILON;
 use std::ops::*;
 
@@ -78,6 +78,10 @@ impl Vector4 {
 
     pub fn sum(&self) -> f32 {
         self.x + self.y + self.z + self.w
+    }
+
+    pub fn truncate(&self) -> Vector3 {
+        Vector3::new(self.x, self.y, self.z)
     }
 }
 

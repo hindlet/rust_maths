@@ -1,5 +1,6 @@
 use std::ops::*;
 use std::f32::EPSILON;
+use super::Vector3;
 
 
 #[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
@@ -68,6 +69,10 @@ impl Vector2 {
 
     pub fn to_isize_array(&self) -> [isize; 2] {
         [self.x.round() as isize, self.y.round() as isize]
+    }
+
+    pub fn extend(&self) -> Vector3 {
+        Vector3::new(self.x, self.y, 0.0)
     }
 }
 

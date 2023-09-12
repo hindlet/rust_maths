@@ -1,6 +1,6 @@
 #![allow(dead_code)]
-use super::vector_two::Vector2;
-use super::super::matrices::Matrix3;
+use super::{Vector2, Vector4};
+use super::super::Matrix3;
 use std::{f32::consts::PI, cmp::Ordering};
 use std::f32::EPSILON;
 use std::ops::*;
@@ -180,6 +180,14 @@ impl Vector3 {
     pub fn to_isize_array(&self) -> [isize; 3] {
         [self.x.round() as isize, self.y.round() as isize, self.y.round() as isize]
     }
+
+    pub fn extend(&self) -> Vector4 {
+        Vector4::new(self.x, self.y, self.z, 0.0)
+    }
+
+    pub fn truncate(&self) -> Vector2 {
+        Vector2::new(self.x, self.y)
+    }
 }
 
 impl Eq for Vector3 {}
@@ -279,12 +287,6 @@ impl From<[u32; 3]> for Vector3 {
 impl From<[usize; 3]> for Vector3 {
     fn from(value: [usize; 3]) -> Self {
         Vector3::new(value[0] as f32, value[1] as f32, value[2] as f32)
-    }
-}
-
-impl From<Vector2> for Vector3 {
-    fn from(value: Vector2) -> Self {
-        Vector3::new(value.x, value.y, 0.0)
     }
 }
 //////////////////////////////////////////////////////////////////
