@@ -161,6 +161,6 @@ impl Mul<Vector4> for Matrix4 {
 
 impl Display for Matrix4 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[\n\t{},\n\t{},\n\t{},\n\t{}\n]", self.x, self.y, self.z, self.w)
+        write!(f, "[\n   {},\n   {},\n   {},\n   {}\n]", self.x, self.y, self.z, self.w)
     }
 }
