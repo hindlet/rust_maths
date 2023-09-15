@@ -1,4 +1,4 @@
-use std::ops::*;
+use std::{ops::*, fmt::Display};
 use std::f32::EPSILON;
 use super::Vector3;
 
@@ -225,5 +225,11 @@ impl Neg for Vector2 {
             x: -self.x,
             y: -self.y,
         }
+    }
+}
+
+impl Display for Vector2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[{}, {}]", self.x, self.y)
     }
 }

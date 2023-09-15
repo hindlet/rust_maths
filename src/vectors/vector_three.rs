@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use super::{Vector2, Vector4};
 use super::super::Matrix3;
-use std::{f32::consts::PI, cmp::Ordering};
+use std::{f32::consts::PI, cmp::Ordering, fmt::Display};
 use std::f32::EPSILON;
 use std::ops::*;
 const HALF_PI: f32 = PI / 2.0;
@@ -407,5 +407,11 @@ impl Neg for Vector3 {
             y: -self.y,
             z: -self.z,
         }
+    }
+}
+
+impl Display for Vector3 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[{}, {}, {}]", self.x, self.y, self.z)
     }
 }

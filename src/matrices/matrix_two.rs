@@ -1,4 +1,4 @@
-use std::ops::*;
+use std::{ops::*, fmt::Display};
 
 use crate::Vector2;
 
@@ -115,5 +115,11 @@ impl Div<f32> for Matrix2 {
     type Output = Matrix2;
     fn div(self, rhs: f32) -> Self::Output {
         Matrix2::from_rows(self.x / rhs, self.y / rhs)
+    }
+}
+
+impl Display for Matrix2 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[\n  {},\n   {}\n]", self.x, self.y)
     }
 }

@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use super::super::vectors::Vector4;
 use super::*;
-use std::ops::*;
+use std::{ops::*, fmt::Display};
 
 #[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Matrix4 {
@@ -155,5 +155,12 @@ impl Mul<Vector4> for Matrix4 {
             self.z.dot(rhs),
             self.w.dot(rhs)
         )
+    }
+}
+
+
+impl Display for Matrix4 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[\n  {},\n   {},\n   {},\n   {}\n]", self.x, self.y, self.z, self.w)
     }
 }

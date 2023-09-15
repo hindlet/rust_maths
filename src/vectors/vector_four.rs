@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 use super::{Vector2, Vector3};
-use std::f32::EPSILON;
+use std::{f32::EPSILON, fmt::Display};
 use std::ops::*;
 
 
@@ -200,5 +200,11 @@ impl Neg for Vector4 {
             z: -self.z,
             w: -self.w,
         }
+    }
+}
+
+impl Display for Vector4 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[{}, {}, {}, {}]", self.x, self.y, self.z, self.w)
     }
 }

@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 use super::super::vectors::Vector3;
 use super::*;
-use std::{ops::*, f32::consts::PI};
+use std::{ops::*, f32::consts::PI, fmt::Display};
 
 #[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
 pub struct Matrix3 {
@@ -285,3 +285,9 @@ impl Div<f32> for Matrix3 {
     }
 }
 
+
+impl Display for Matrix3 {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "[\n  {},\n   {},\n   {}\n]", self.x, self.y, self.z)
+    }
+}
