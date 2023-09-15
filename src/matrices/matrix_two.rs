@@ -120,6 +120,6 @@ impl Div<f32> for Matrix2 {
 
 impl Display for Matrix2 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[\n  {},\n   {}\n]", self.x, self.y)
+        write!(f, "[\n\t{},\n\t{}\n]", self.x, self.y)
     }
 }

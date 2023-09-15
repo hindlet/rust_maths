@@ -288,6 +288,6 @@ impl Div<f32> for Matrix3 {
 
 impl Display for Matrix3 {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(f, "[\n  {},\n   {},\n   {}\n]", self.x, self.y, self.z)
+        write!(f, "[\n\t{},\n\t{},\n\t{}\n]", self.x, self.y, self.z)
     }
 }
