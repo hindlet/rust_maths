@@ -83,6 +83,19 @@ impl Matrix4 {
         )
     }
 
+    pub fn transpose(&mut self) {
+        *self = self.transposed();
+    }
+
+    pub fn transposed(&self) -> Matrix4 {
+        Matrix4::new(
+            self.x.x, self.y.x, self.z.x, self.w.x,
+            self.x.y, self.y.y, self.z.y, self.w.y,
+            self.x.z, self.y.z, self.z.z, self.w.z,
+            self.x.w, self.y.w, self.z.w, self.w.w
+        )
+    }
+
 }
 
 impl Into<[[f32; 4]; 4]> for Matrix4 {
