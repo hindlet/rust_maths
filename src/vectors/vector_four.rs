@@ -1,10 +1,12 @@
 #![allow(dead_code)]
+use serde::{Deserialize, Serialize};
+
 use super::{Vector2, Vector3};
 use std::{f32::EPSILON, fmt::Display};
 use std::ops::*;
 
 
-#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd, Deserialize, Serialize)]
 pub struct Vector4 {
     pub x: f32, 
     pub y: f32,

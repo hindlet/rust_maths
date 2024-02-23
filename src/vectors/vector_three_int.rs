@@ -1,8 +1,10 @@
 use std::ops::*;
+use serde::{Deserialize, Serialize};
+
 use super::vector_three::Vector3;
 
 
-#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd, Eq, Hash)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd, Eq, Hash, Deserialize, Serialize)]
 pub struct Vector3Int {
     pub x: i32, 
     pub y: i32,

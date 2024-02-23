@@ -50,7 +50,7 @@ pub fn normal_cmd(value: f32, mean: f32, standard_deviation: f32) -> f32 {
 
 
 
-/// sorts the given values list by their accosiated f32 in ascending order
+/// sorts the given values list by their accosiated val in ascending order
 pub fn quicksort<T, P: PartialOrd + Copy>(list: Vec<(P, T)>) -> Vec<(P, T)>{
     if list.len() <= 1 {return list;}
 

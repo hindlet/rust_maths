@@ -1,9 +1,11 @@
 use std::{ops::*, fmt::Display};
 use std::f32::EPSILON;
+use serde::{Deserialize, Serialize};
+
 use super::Vector3;
 
 
-#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd, Deserialize, Serialize)]
 pub struct Vector2 {
     pub x: f32, 
     pub y: f32,

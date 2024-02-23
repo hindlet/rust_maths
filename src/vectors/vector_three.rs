@@ -1,4 +1,6 @@
 #![allow(dead_code)]
+use serde::{Deserialize, Serialize};
+
 use super::{Vector2, Vector4};
 use super::super::Matrix3;
 use std::{f32::consts::PI, cmp::Ordering, fmt::Display};
@@ -14,7 +16,7 @@ const HALF_PI: f32 = PI / 2.0;
 /// - If and only if the z components of the vectors are the same, they are equal
 /// - If the values differ at any of these steps, the ordering of the components at that step is taken
 /// 
-#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
+#[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd, Deserialize, Serialize)]
 pub struct Vector3 {
     pub x: f32, 
     pub y: f32,
