@@ -96,28 +96,19 @@ impl Matrix4 {
         )
     }
 
+    pub fn truncate(&self) -> Matrix3 {
+        Matrix3::new(
+            self.x.x, self.x.y, self.x.z,
+            self.y.x, self.y.y, self.y.z,
+            self.z.x, self.z.y, self.z.z
+        )
+    }
+
 }
 
 impl Into<[[f32; 4]; 4]> for Matrix4 {
     fn into(self) -> [[f32; 4]; 4] {
         [self.x.into(), self.y.into(), self.z.into(), self.w.into()]
-    }
-}
-
-impl From<Matrix3> for Matrix4 {
-    fn from(mat: Matrix3) -> Self {
-        Matrix4::new(
-            mat.x.x, mat.x.y, mat.x.z, 0.0,
-            mat.y.x, mat.y.y, mat.y.z, 0.0,
-            mat.z.x, mat.z.y, mat.z.z, 0.0,
-            0.0, 0.0, 0.0, 1.0,
-        )
-    }
-}
-
-impl From<Matrix2> for Matrix4 {
-    fn from(value: Matrix2) -> Self {
-        Matrix3::from(value).into()
     }
 }
 

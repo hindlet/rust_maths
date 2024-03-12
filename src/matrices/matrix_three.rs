@@ -205,18 +205,24 @@ impl Matrix3 {
         let c2  = self.x.cross(self.y);
         Matrix3::from_columns(c0, c1, c2) / det
     }
-}
 
+    pub fn extend(&self) -> Matrix4 {
+        Matrix4::new(
+            self.x.x, self.x.y, self.x.z, 0.0,
+            self.y.x, self.y.y, self.y.z, 0.0,
+            self.z.x, self.z.y, self.z.z, 0.0,
+            0.0, 0.0, 0.0, 1.0,
+        )
+    }
 
-impl From<Matrix2> for Matrix3 {
-    fn from(value: Matrix2) -> Self {
-        Matrix3::new(
-            value.x.x, value.x.y, 0.0,
-            value.y.x, value.y.y, 0.0,
-            0.0, 0.0, 1.0
+    pub fn truncate(&self) -> Matrix2 {
+        Matrix2::new(
+            self.x.x, self.x.y,
+            self.y.x, self.y.y,
         )
     }
 }
+
 
 
 impl Mul for Matrix3 {

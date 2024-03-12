@@ -1,6 +1,6 @@
 use std::{ops::*, fmt::Display};
 
-use crate::Vector2;
+use crate::{Matrix3, Vector2};
 
 
 #[derive(Default, Clone, Copy, Debug, PartialEq, PartialOrd)]
@@ -59,6 +59,14 @@ impl Matrix2 {
             self.y.y, -self.x.y,
             -self.y.x, self.x.x
         ) / self.det()
+    }
+
+    pub fn extend(&self) -> Matrix3 {
+        Matrix3::new(
+            self.x.x, self.x.y, 0.0,
+            self.y.x, self.y.y, 0.0,
+            0.0, 0.0, 1.0
+        )
     }
 }
 
