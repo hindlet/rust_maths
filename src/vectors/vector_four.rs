@@ -85,6 +85,16 @@ impl Vector4 {
     pub fn truncate(&self) -> Vector3 {
         Vector3::new(self.x, self.y, self.z)
     }
+
+    pub fn truncate_n(&self, n: usize) -> Vector3 {
+        match n {
+            0 => Vector3::new(self.y, self.z, self.w),
+            1 => Vector3::new(self.x, self.z, self.w),
+            2 => Vector3::new(self.x, self.y, self.w),
+            3 => Vector3::new(self.x, self.y, self.z),
+            _ => panic!("Index out of range")
+        }
+    }
 }
 
 impl Into<[f32; 4]> for Vector4 {

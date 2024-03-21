@@ -105,106 +105,148 @@ impl Matrix4 {
     }
 
     pub fn determinant(&self) -> f32 {
-        self.x.x * (
-            self.y.y * (self.z.z * self.w.w - self.w.z * self.z.w)
-            - self.y.z * (self.z.y * self.w.w - self.w.y * self.z.w)
-            + self.y.w * (self.z.y * self.w.z - self.w.y * self.z.z)
-        )
-        - self.x.y * (
-            self.y.x * (self.z.z * self.w.w - self.w.z * self.z.w)
-            - self.y.z * (self.z.x * self.w.w - self.w.x * self.z.w)
-            + self.y.w * (self.z.x * self.w.z - self.w.z * self.z.z)
-        )
-        + self.x.z * (
-            self.y.z * (self.z.y * self.w.w - self.w.y * self.z.w)
-            - self.y.y * (self.z.x * self.w.w - self.w.z * self.z.w)
-            + self.y.w * (self.z.x * self.w.y - self.w.x * self.z.y)
-        )
-        - self.x.w * (
-            self.y.x * (self.z.y * self.w.z - self.w.y * self.z.z)
-            - self.y.y * (self.z.x * self.w.z - self.w.x * self.z.z)
-            + self.y.z * (self.z.x * self.w.y - self.w.x * self.z.y)
-        )
+        // self.x.x * (
+        //     self.y.y * (self.z.z * self.w.w - self.w.z * self.z.w)
+        //     - self.y.z * (self.z.y * self.w.w - self.w.y * self.z.w)
+        //     + self.y.w * (self.z.y * self.w.z - self.w.y * self.z.z)
+        // )
+        // - self.x.y * (
+        //     self.y.x * (self.z.z * self.w.w - self.w.z * self.z.w)
+        //     - self.y.z * (self.z.x * self.w.w - self.w.x * self.z.w)
+        //     + self.y.w * (self.z.x * self.w.z - self.w.z * self.z.z)
+        // )
+        // + self.x.z * (
+        //     self.y.z * (self.z.y * self.w.w - self.w.y * self.z.w)
+        //     - self.y.y * (self.z.x * self.w.w - self.w.z * self.z.w)
+        //     + self.y.w * (self.z.x * self.w.y - self.w.x * self.z.y)
+        // )
+        // - self.x.w * (
+        //     self.y.x * (self.z.y * self.w.z - self.w.y * self.z.z)
+        //     - self.y.y * (self.z.x * self.w.z - self.w.x * self.z.z)
+        //     + self.y.z * (self.z.x * self.w.y - self.w.x * self.z.y)
+        // )
+        self.x.x * Matrix3::from_rows(self.y.truncate_n(0), self.z.truncate_n(0), self.w.truncate_n(0)).determinant()
+        - self.x.y * Matrix3::from_rows(self.y.truncate_n(1), self.z.truncate_n(1), self.w.truncate_n(1)).determinant()
+        + self.x.z * Matrix3::from_rows(self.y.truncate_n(2), self.z.truncate_n(2), self.w.truncate_n(2)).determinant()
+        - self.x.w * Matrix3::from_rows(self.y.truncate_n(3), self.z.truncate_n(3), self.w.truncate_n(3)).determinant()
     }
 
     // pain
-    pub fn invert(&self) -> Matrix4 {
-        let inv_det = 1.0 / self.determinant();
+    pub fn inverted(&self) -> Matrix4 {
+        // let inv_det = 1.0 / self.determinant();
 
-        // -1^(1 + 1) = 1
-        let xx = self.y.y * (self.z.z * self.w.w - self.w.z * self.z.w)
-            - self.y.z * (self.z.y * self.w.w - self.w.y * self.z.w)
-            + self.y.w * (self.z.y * self.w.z - self.w.y * self.z.z);
-        // -1 & (1 + 2) = -1
-        let xy = -1.0 * self.y.x * (self.z.z * self.w.w - self.w.z * self.z.w)
-            - self.y.z * (self.z.x * self.w.w - self.w.x * self.z.w)
-            + self.y.w * (self.z.x * self.w.z - self.w.x * self.z.z);
-        // -1 ^ (1 + 3) = 1
-        let xz = self.y.x * (self.z.y * self.w.w - self.w.y * self.z.w)
-            - self.y.y * (self.z.x * self.w.w - self.w.x * self.z.w)
-            + self.y.w * (self.z.x * self.w.y - self.w.x * self.z.y);
-        // -1 & (1 + 4) = -1
-        let xw = -1.0 * self.y.x * (self.z.y * self.w.z - self.w.y * self.z.z)
-            - self.y.y * (self.z.x * self.w.z - self.w.x * self.z.z)
-            + self.y.z * (self.z.x * self.w.y - self.w.x * self.z.y);
+        // // -1^(1 + 1) = 1
+        // let xx = self.y.y * (self.z.z * self.w.w - self.w.z * self.z.w)
+        //     - self.y.z * (self.z.y * self.w.w - self.w.y * self.z.w)
+        //     + self.y.w * (self.z.y * self.w.z - self.w.y * self.z.z);
+        // // -1 & (1 + 2) = -1
+        // let xy = -1.0 * self.y.x * (self.z.z * self.w.w - self.w.z * self.z.w)
+        //     - self.y.z * (self.z.x * self.w.w - self.w.x * self.z.w)
+        //     + self.y.w * (self.z.x * self.w.z - self.w.x * self.z.z);
+        // // -1 ^ (1 + 3) = 1
+        // let xz = self.y.x * (self.z.y * self.w.w - self.w.y * self.z.w)
+        //     - self.y.y * (self.z.x * self.w.w - self.w.x * self.z.w)
+        //     + self.y.w * (self.z.x * self.w.y - self.w.x * self.z.y);
+        // // -1 & (1 + 4) = -1
+        // let xw = -1.0 * self.y.x * (self.z.y * self.w.z - self.w.y * self.z.z)
+        //     - self.y.y * (self.z.x * self.w.z - self.w.x * self.z.z)
+        //     + self.y.z * (self.z.x * self.w.y - self.w.x * self.z.y);
 
-        // -1^(2 + 1) = -1
-        let yx = -1.0 * self.x.y * (self.z.z * self.w.w - self.w.z * self.z.w)
-            - self.x.z * (self.z.y * self.w.w - self.w.y * self.z.w)
-            + self.x.w * (self.z.y * self.w.z - self.w.y * self.z.z);
-        // -1 & (2 + 2) = 1
-        let yy = self.x.x * (self.z.z * self.w.w - self.w.z * self.z.w)
-            - self.x.z * (self.z.x * self.w.w - self.w.x * self.z.w)
-            + self.x.w * (self.z.x * self.w.z - self.w.x * self.z.z);
-        // -1 ^ (2 + 3) = -1
-        let yz = -1.0 * self.x.x * (self.z.y * self.w.w - self.w.y * self.z.w)
-            - self.x.y * (self.z.x * self.w.w - self.w.x * self.z.w)
-            + self.x.w * (self.z.x * self.w.y - self.w.x * self.z.y);
-        // -1 & (2 + 4) = 1
-        let yw = self.x.x * (self.z.y * self.w.z - self.w.y * self.z.z)
-            - self.x.y * (self.z.x * self.w.z - self.w.x * self.z.z)
-            + self.x.z * (self.z.x * self.w.y - self.w.x * self.z.y);
+        // // -1^(2 + 1) = -1
+        // let yx = -1.0 * self.x.y * (self.z.z * self.w.w - self.w.z * self.z.w)
+        //     - self.x.z * (self.z.y * self.w.w - self.w.y * self.z.w)
+        //     + self.x.w * (self.z.y * self.w.z - self.w.y * self.z.z);
+        // // -1 & (2 + 2) = 1
+        // let yy = self.x.x * (self.z.z * self.w.w - self.w.z * self.z.w)
+        //     - self.x.z * (self.z.x * self.w.w - self.w.x * self.z.w)
+        //     + self.x.w * (self.z.x * self.w.z - self.w.x * self.z.z);
+        // // -1 ^ (2 + 3) = -1
+        // let yz = -1.0 * self.x.x * (self.z.y * self.w.w - self.w.y * self.z.w)
+        //     - self.x.y * (self.z.x * self.w.w - self.w.x * self.z.w)
+        //     + self.x.w * (self.z.x * self.w.y - self.w.x * self.z.y);
+        // // -1 & (2 + 4) = 1
+        // let yw = self.x.x * (self.z.y * self.w.z - self.w.y * self.z.z)
+        //     - self.x.y * (self.z.x * self.w.z - self.w.x * self.z.z)
+        //     + self.x.z * (self.z.x * self.w.y - self.w.x * self.z.y);
 
-        // -1^(3 + 1) = 1
-        let zx = self.x.y * (self.y.z * self.w.w - self.w.z * self.y.w)
-            - self.x.z * (self.y.y * self.w.w - self.w.y * self.y.w)
-            + self.x.w * (self.y.y * self.w.z - self.w.y * self.y.z);
-        // -1 & (3 + 2) = -1
-        let zy = -1.0 * self.x.x * (self.y.z * self.w.w - self.w.z * self.y.w)
-            - self.x.z * (self.y.x * self.w.w - self.w.x * self.y.w)
-            + self.x.w * (self.y.x * self.w.z - self.w.x * self.y.z);
-        // -1 ^ (3 + 3) = 1
-        let zz = self.x.x * (self.y.y * self.w.w - self.w.y * self.y.w)
-            - self.x.y * (self.y.x * self.w.w - self.w.x * self.y.w)
-            + self.x.w * (self.y.x * self.w.y - self.w.x * self.y.y);
-        // -1 & (3 + 4) = -1
-        let zw = -1.0 * self.x.x * (self.y.y * self.w.z - self.w.y * self.y.z)
-            - self.x.y * (self.y.x * self.w.z - self.w.x * self.y.z)
-            + self.x.z * (self.y.x * self.w.y - self.w.x * self.y.y);
+        // // -1^(3 + 1) = 1
+        // let zx = self.x.y * (self.y.z * self.w.w - self.w.z * self.y.w)
+        //     - self.x.z * (self.y.y * self.w.w - self.w.y * self.y.w)
+        //     + self.x.w * (self.y.y * self.w.z - self.w.y * self.y.z);
+        // // -1 & (3 + 2) = -1
+        // let zy = -1.0 * self.x.x * (self.y.z * self.w.w - self.w.z * self.y.w)
+        //     - self.x.z * (self.y.x * self.w.w - self.w.x * self.y.w)
+        //     + self.x.w * (self.y.x * self.w.z - self.w.x * self.y.z);
+        // // -1 ^ (3 + 3) = 1
+        // let zz = self.x.x * (self.y.y * self.w.w - self.w.y * self.y.w)
+        //     - self.x.y * (self.y.x * self.w.w - self.w.x * self.y.w)
+        //     + self.x.w * (self.y.x * self.w.y - self.w.x * self.y.y);
+        // // -1 & (3 + 4) = -1
+        // let zw = -1.0 * self.x.x * (self.y.y * self.w.z - self.w.y * self.y.z)
+        //     - self.x.y * (self.y.x * self.w.z - self.w.x * self.y.z)
+        //     + self.x.z * (self.y.x * self.w.y - self.w.x * self.y.y);
 
-        // -1^(4 + 1) = -1
-        let wx = -1.0 * self.x.y * (self.y.z * self.z.w - self.z.z * self.y.w)
-            - self.x.z * (self.y.y * self.z.w - self.z.y * self.y.w)
-            + self.x.w * (self.y.y * self.z.z - self.z.y * self.y.z);
-        // -1 & (4 + 2) = 1
-        let wy = self.x.x * (self.y.z * self.z.w - self.z.z * self.y.w)
-            - self.x.z * (self.y.x * self.z.w - self.z.x * self.y.w)
-            + self.x.w * (self.y.x * self.z.z - self.z.x * self.y.z);
-        // -1 ^ (4 + 3) = -1
-        let wz = -1.0 * self.x.x * (self.y.y * self.z.w - self.z.y * self.y.w)
-            - self.x.y * (self.y.x * self.z.w - self.z.x * self.y.w)
-            + self.x.w * (self.y.x * self.z.y - self.z.x * self.y.y);
-        // -1 & (4 + 4) = 1
-        let ww = self.x.x * (self.y.y * self.z.z - self.z.y * self.y.z)
-            - self.x.y * (self.y.x * self.z.z - self.z.x * self.y.z)
-            + self.x.z * (self.y.x * self.z.y - self.z.x * self.y.y);
+        // // -1^(4 + 1) = -1
+        // let wx = -1.0 * self.x.y * (self.y.z * self.z.w - self.z.z * self.y.w)
+        //     - self.x.z * (self.y.y * self.z.w - self.z.y * self.y.w)
+        //     + self.x.w * (self.y.y * self.z.z - self.z.y * self.y.z);
+        // // -1 & (4 + 2) = 1
+        // let wy = self.x.x * (self.y.z * self.z.w - self.z.z * self.y.w)
+        //     - self.x.z * (self.y.x * self.z.w - self.z.x * self.y.w)
+        //     + self.x.w * (self.y.x * self.z.z - self.z.x * self.y.z);
+        // // -1 ^ (4 + 3) = -1
+        // let wz = -1.0 * self.x.x * (self.y.y * self.z.w - self.z.y * self.y.w)
+        //     - self.x.y * (self.y.x * self.z.w - self.z.x * self.y.w)
+        //     + self.x.w * (self.y.x * self.z.y - self.z.x * self.y.y);
+        // // -1 & (4 + 4) = 1
+        // let ww = self.x.x * (self.y.y * self.z.z - self.z.y * self.y.z)
+        //     - self.x.y * (self.y.x * self.z.z - self.z.x * self.y.z)
+        //     + self.x.z * (self.y.x * self.z.y - self.z.x * self.y.y);
 
-        Matrix4::new(
-            xx, xy, xz, xw,
-            yx, yy, yz, yw,
-            zx, zy, zz, zw,
-            wx, wy, wz, ww
-        ) * inv_det
+        // Matrix4::new(
+        //     xx, xy, xz, xw,
+        //     yx, yy, yz, yw,
+        //     zx, zy, zz, zw,
+        //     wx, wy, wz, ww
+        // ) * inv_det
+        let det = self.determinant();
+        if det == 0.0 {
+            self.clone()
+        } else {
+            let inv_det = 1.0 / det;
+            let t = self.transposed();
+            let cf = |i, j| {
+                let mat = match i {
+                    0 => {
+                        Matrix3::from_columns(t.y.truncate_n(j), t.z.truncate_n(j), t.w.truncate_n(j))
+                    }
+                    1 => {
+                        Matrix3::from_columns(t.x.truncate_n(j), t.z.truncate_n(j), t.w.truncate_n(j))
+                    }
+                    2 => {
+                        Matrix3::from_columns(t.x.truncate_n(j), t.y.truncate_n(j), t.w.truncate_n(j))
+                    }
+                    3 => {
+                        Matrix3::from_columns(t.x.truncate_n(j), t.y.truncate_n(j), t.z.truncate_n(j))
+                    }
+                    _ => panic!("out of range"),
+                };
+                let sign = if (i + j) & 1 == 1 {
+                    -1.0
+                } else {
+                    1.0
+                };
+                mat.determinant() * sign * inv_det
+            };
+
+
+            Matrix4::new(
+                cf(0, 0), cf(0, 1), cf(0, 2), cf(0, 3),
+                cf(1, 0), cf(1, 1), cf(1, 2), cf(1, 3),
+                cf(2, 0), cf(2, 1), cf(2, 2), cf(2, 3),
+                cf(3, 0), cf(3, 1), cf(3, 2), cf(3, 3),
+            )
+        }
     }
 
 }
@@ -248,6 +290,30 @@ impl Mul<Vector4> for Matrix4 {
             self.y.dot(rhs),
             self.z.dot(rhs),
             self.w.dot(rhs)
+        )
+    }
+}
+
+impl Add for Matrix4 {
+    type Output = Matrix4;
+    fn add(self, rhs: Self) -> Self::Output {
+        Matrix4::from_rows(
+            self.x + rhs.x,
+            self.y + rhs.y,
+            self.z + rhs.z,
+            self.w + rhs.w
+        )
+    }
+}
+
+impl Sub for Matrix4 {
+    type Output = Matrix4;
+    fn sub(self, rhs: Self) -> Self::Output {
+        Matrix4::from_rows(
+            self.x - rhs.x,
+            self.y - rhs.y,
+            self.z - rhs.z,
+            self.w - rhs.w
         )
     }
 }

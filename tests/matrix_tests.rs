@@ -40,13 +40,25 @@ mod matrix_tests {
 
     #[test]
     fn determinant_test() {
-        let mat = Matrix3::new(
+        let mat2 = Matrix2::new(
+            2.0, 1.0,
+            -1.0, 3.0
+        );
+        let mat3 = Matrix3::new(
             3.0, 4.0, 6.0,
             7.0, 8.0, 9.0,
             2.0, 1.0, 3.0
         );
+        let mat4 = Matrix4::new(
+            1.0, 2.0, 3.0, 4.0,
+            6.0, 7.0, 3.0, 4.0,
+            3.0, 2.0, 7.0, 9.0,
+            10.0, 11.0, 5.0, 4.0
+        );
 
-        assert_eq!(-21.0, mat.determinant())
+        assert_eq!(7.0, mat2.det());
+        assert_eq!(-21.0, mat3.determinant());
+        assert_eq!(130.0, mat4.determinant());
     }
 
     #[test]
@@ -94,9 +106,18 @@ mod matrix_tests {
             2.0, 1.0, 3.0
         );
         let resmat3 = mat3.inverted() * mat3;
+        let mat4 = Matrix4::new(
+            5.0, -2.0, 1.0, 23.0,
+            0.0, 3.0, 4.5, 5.5,
+            3.3, 4.5, 1.2, 0.7,
+            4.5, 6.6, 7.4, 8.8
+        );
+        let resmat4 = mat4.inverted() * mat4;
+        println!("{}", resmat4);
 
         assert!(Matrix2::IDENTITY - Matrix2::EPSILON <= resmat2 && Matrix2::IDENTITY + Matrix2::EPSILON >= resmat2);
         assert!(Matrix3::IDENTITY - Matrix3::EPSILON <= resmat3 && Matrix3::IDENTITY + Matrix3::EPSILON >= resmat3);
+        assert!(Matrix4::IDENTITY - Matrix4::EPSILON <= resmat4 && Matrix4::IDENTITY + Matrix4::EPSILON >= resmat4)
     } 
 
     #[test]
