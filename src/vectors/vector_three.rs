@@ -194,7 +194,6 @@ impl Vector3 {
 
 impl Eq for Vector3 {}
 
-/// ordering notes
 
 impl Ord for Vector3 {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
@@ -348,6 +347,27 @@ impl SubAssign for Vector3 {
     }
 }
 
+impl Mul for Vector3 {
+    type Output = Self;
+    fn mul(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z
+        }
+    }
+}
+
+impl MulAssign for Vector3 {
+    fn mul_assign(&mut self, rhs: Self) {
+        *self = Self {
+            x: self.x * rhs.x,
+            y: self.y * rhs.y,
+            z: self.z * rhs.z
+        }
+    }
+}
+
 impl Mul<f32> for Vector3 {
     type Output = Self;
     fn mul(self, rhs: f32) -> Self::Output {
@@ -369,6 +389,27 @@ impl MulAssign<f32> for Vector3 {
     }
 }
 
+impl Div for Vector3 {
+    type Output = Self;
+    fn div(self, rhs: Self) -> Self::Output {
+        Self {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z
+        }
+    }
+}
+
+impl DivAssign for Vector3 {
+    fn div_assign(&mut self, rhs: Self) {
+        *self = Self {
+            x: self.x / rhs.x,
+            y: self.y / rhs.y,
+            z: self.z / rhs.z
+        }
+    }
+}
+
 impl Div<f32> for Vector3 {
     type Output = Self;
     fn div(self, rhs: f32) -> Self::Output {
@@ -376,17 +417,6 @@ impl Div<f32> for Vector3 {
             x: self.x / rhs,
             y: self.y / rhs,
             z: self.z / rhs,
-        }
-    }
-}
-
-impl Div<Vector3> for Vector3 {
-    type Output = Self;
-    fn div(self, rhs: Vector3) -> Self::Output {
-        Self {
-            x: self.x / rhs.x,
-            y: self.y / rhs.y,
-            z: self.z / rhs.z,
         }
     }
 }
