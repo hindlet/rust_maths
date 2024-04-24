@@ -36,4 +36,10 @@ mod vector_three_tests {
         assert!(Vector3::X < Vector3::X + Vector3::Y);
         assert!(Vector3::X + Vector3::Y < Vector3::X + Vector3::Y + Vector3::Z);
     }
+
+
+    #[test]
+    fn multiplication_test() {
+        assert_eq!(Vector3::new(5.0, 4.0, 3.0) * Vector3::new(3.0, 4.0, 5.0), Vector3::new(15.0, 16.0, 15.0))
+    }
 }
