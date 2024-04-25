@@ -183,8 +183,13 @@ impl Vector3 {
         [self.x.round() as isize, self.y.round() as isize, self.y.round() as isize]
     }
 
+    // extends to a vector 4 adding a zero on the end
     pub fn extend(&self) -> Vector4 {
         Vector4::new(self.x, self.y, self.z, 0.0)
+    }
+
+    pub fn extend_with(&self, extension: f32) -> Vector4 {
+        Vector4::new(self.x, self.y, self.z, extension)
     }
 
     pub fn truncate(&self) -> Vector2 {
