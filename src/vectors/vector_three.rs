@@ -352,10 +352,10 @@ impl SubAssign for Vector3 {
     }
 }
 
-impl Mul for Vector3 {
-    type Output = Self;
-    fn mul(self, rhs: Self) -> Self::Output {
-        Self {
+impl Mul<Vector3> for Vector3 {
+    type Output = Vector3;
+    fn mul(self, rhs: Vector3) -> Self::Output {
+        Vector3 {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
             z: self.z * rhs.z
@@ -363,8 +363,8 @@ impl Mul for Vector3 {
     }
 }
 
-impl MulAssign for Vector3 {
-    fn mul_assign(&mut self, rhs: Self) {
+impl MulAssign<Vector3> for Vector3 {
+    fn mul_assign(&mut self, rhs: Vector3) {
         *self = Self {
             x: self.x * rhs.x,
             y: self.y * rhs.y,
