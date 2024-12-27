@@ -1,9 +1,11 @@
 #![allow(dead_code)]
+use std::{collections::HashMap, hash::Hash};
+
 // use winit::event::VirtualKeyCode;
 use super::{Vector3, Matrix3, Matrix4};
 
 
-pub struct Camera {
+pub struct Camera<MovementControlVariable: Eq + Hash> {
     pub position: Vector3, 
     pub direction: Vector3,
     pub up: Vector3,
@@ -11,11 +13,30 @@ pub struct Camera {
     pub rotate_speed: f32,
     pub movement: [bool; 10], // forward, back, left, right, up, down, spin right, spin left, spin forward, spin backward
     is_controlled: bool,
+
+
+    pub movement_map: HashMap<MovementControlVariable, CameraDirections>
 }
 
-impl Camera {
 
-    pub fn new(start_pos: Option<[f32; 3]>, start_dir: Option<[f32; 3]>, move_speed: Option<f32>, rotate_speed: Option<f32>) -> Self{
+
+
+pub enum CameraDirections {
+    Forward,
+    Backwards,
+    Left,
+    Right,
+    Up,
+    Down,
+    SpinRight,
+    SpinLeft,
+    SpinForward,
+    SpinBackward
+}
+
+impl<T: Eq + Hash> Camera<T> {
+
+    pub fn new(start_pos: Option<[f32; 3]>, start_dir: Option<[f32; 3]>, move_speed: Option<f32>, rotate_speed: Option<f32>, movement_map: Option<HashMap<T, CameraDirections>>) -> Self{
         let position: Vector3 = {
             if start_pos.is_some() {
                 start_pos.unwrap().into()
@@ -32,6 +53,8 @@ impl Camera {
             }
         };
 
+        let control_map = if movement_map.is_some() {movement_map.unwrap()} else {HashMap::new()};
+
         Camera {
             position,
             direction,
@@ -40,6 +63,7 @@ impl Camera {
             movement: [false; 10],
             up: -Vector3::Y,
             is_controlled: false,
+            movement_map: control_map
         }
     }
 
@@ -72,37 +96,36 @@ impl Camera {
         self.direction = (target - self.position).normalised();
     }
 
-    #[cfg(feature = "webp")]
-    pub fn process_key(&mut self, keycode: VirtualKeyCode, state: bool) {
-        match keycode {
-            VirtualKeyCode::W => {
+    pub fn process_input(&mut self, control: T, state: bool) {
+        match self.movement_map.get(&control) {
+            Some(CameraDirections::Forward) => {
                 self.movement[0] = state;
             }
-            VirtualKeyCode::S => {
+            Some(CameraDirections::Backwards) => {
                 self.movement[1] = state;
             }
-            VirtualKeyCode::A => {
+            Some(CameraDirections::Left) => {
                 self.movement[2] = state;
             }
-            VirtualKeyCode::D => {
+            Some(CameraDirections::Right) => {
                 self.movement[3] = state;
             }
-            VirtualKeyCode::Space => {
+            Some(CameraDirections::Up) => {
                 self.movement[4] = state;
             }
-            VirtualKeyCode::C => {
+            Some(CameraDirections::Down) => {
                 self.movement[5] = state;
             }
-            VirtualKeyCode::Q => {
+            Some(CameraDirections::SpinLeft) => {
                 self.movement[6] = state;
             }
-            VirtualKeyCode::E => {
+            Some(CameraDirections::SpinRight) => {
                 self.movement[7] = state;
             }
-            VirtualKeyCode::R => {
+            Some(CameraDirections::SpinForward) => {
                 self.movement[8] = state;
             }
-            VirtualKeyCode::F => {
+            Some(CameraDirections::SpinBackward) => {
                 self.movement[9] = state;
             }
             _ => ()
