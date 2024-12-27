@@ -135,7 +135,7 @@ impl<T: Eq + Hash> Camera<T> {
 
 
 
-    pub fn do_move(&mut self, time: f32) {
+    pub fn do_move(&mut self, delta_time: f32) {
         if !self.is_controlled {return;}
 
         // take cross of direction and up to get left
@@ -143,25 +143,25 @@ impl<T: Eq + Hash> Camera<T> {
 
         let forward = left.cross(self.up);
         // forward/back
-        if self.movement[0] {self.position -= forward * self.move_speed * time}
-        if self.movement[1] {self.position += forward * self.move_speed * time}
+        if self.movement[0] {self.position -= forward * self.move_speed * delta_time}
+        if self.movement[1] {self.position += forward * self.move_speed * delta_time}
         // left/right
-        if self.movement[2] {self.position += left * self.move_speed * time}
-        if self.movement[3] {self.position -= left * self.move_speed * time}
+        if self.movement[2] {self.position += left * self.move_speed * delta_time}
+        if self.movement[3] {self.position -= left * self.move_speed * delta_time}
         // up/down
-        if self.movement[4] {self.position -= self.up * self.move_speed * time}
-        if self.movement[5] {self.position += self.up * self.move_speed * time}
+        if self.movement[4] {self.position -= self.up * self.move_speed * delta_time}
+        if self.movement[5] {self.position += self.up * self.move_speed * delta_time}
 
         // spin around up
         // normalise up
         self.up.normalise();
         // rotate
         if self.movement[6] {
-            let rotation = Matrix3::from_angle_and_axis(self.rotate_speed * time, self.up);
+            let rotation = Matrix3::from_angle_and_axis(self.rotate_speed * delta_time, self.up);
             self.direction = rotation * self.direction;
         }
         if self.movement[7] {
-            let rotation = Matrix3::from_angle_and_axis(-self.rotate_speed * time, self.up);
+            let rotation = Matrix3::from_angle_and_axis(-self.rotate_speed * delta_time, self.up);
             self.direction = rotation * self.direction;
         }
 
@@ -170,11 +170,11 @@ impl<T: Eq + Hash> Camera<T> {
         left.normalise();
         // rotate
         if self.movement[8] {
-            let rotation = Matrix3::from_angle_and_axis(self.rotate_speed * time, left);
+            let rotation = Matrix3::from_angle_and_axis(self.rotate_speed * delta_time, left);
             self.direction = rotation * self.direction;
         }
         if self.movement[9] {
-            let rotation = Matrix3::from_angle_and_axis(-self.rotate_speed * time, left);
+            let rotation = Matrix3::from_angle_and_axis(-self.rotate_speed * delta_time, left);
             self.direction = rotation * self.direction;
         }
     }
