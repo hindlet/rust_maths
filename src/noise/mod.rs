@@ -2,6 +2,7 @@ use super::{Vector3, lerp, interp_by_fn};
 
 mod simplex;
 pub use simplex::*;
+mod voronoi;
 
 
 pub fn selector_noise_2d(
