@@ -13,6 +13,9 @@ pub use noise::*;
 // interpolation
 mod interpolation;
 pub use interpolation::*;
+// camera maths
+mod camera;
+pub use camera::Camera;
 
 use std::f32::consts::{FRAC_2_SQRT_PI, SQRT_2, PI};
 pub use rand_chacha::{ChaChaRng, rand_core::SeedableRng};
