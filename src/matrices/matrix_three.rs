@@ -262,10 +262,11 @@ impl Sub for Matrix3 {
 impl Mul<Vector3> for Matrix3 {
     type Output = Vector3;
     fn mul(self, rhs: Vector3) -> Self::Output {
-        let x = rhs.dot(self.x);
-        let y = rhs.dot(self.y);
-        let z = rhs.dot(self.z);
-        Vector3::new(x, y, z)
+        Vector3::new(
+            rhs.dot(self.x),
+            rhs.dot(self.y),
+            rhs.dot(self.z)
+        )
     }
 }
 
