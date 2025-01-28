@@ -144,4 +144,23 @@ mod matrix_tests {
         assert_eq!(Matrix4::IDENTITY * vector4, vector4)
     }
 
+
+
+    #[test]
+    fn matrix_nm_tests() {
+        let a = MaxtrixNM::new_from_items(2, 2, vec![6.0, -2.0, -3.0, 5.0]);
+        let b = MaxtrixNM::new_from_items(2, 2, vec![7.0, 1.0, 0.0, -3.0]);
+        let u = MaxtrixNM::new_from_items(1, 3, vec![-4.0, -7.0, 3.0]);
+        let v = MaxtrixNM::new_from_items(1, 3, vec![6.0, -7.0]);
+        let q = MaxtrixNM::new_from_items(1, 2, vec![6.0, -7.0]);
+
+        println!("{:?}", a.clone() + b.clone());
+        println!("{:?}", a.clone() - b.clone());
+        println!("{:?}", a.clone() * 4.0 - b.clone() * 2.0);
+        println!("{:?}", a.clone() * b.clone());
+        println!("{:?}", b.clone() * a.clone());
+
+        // assert!(false)
+    }
+
 }

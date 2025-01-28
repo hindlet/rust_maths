@@ -59,13 +59,13 @@ impl MaxtrixNM {
     }
 
 
-    pub fn determinant(&self) -> f32 {
+    // pub fn determinant(&self) -> f32 {
 
-    }
+    // }
 
-    pub fn transpose(&self) -> MaxtrixNM {
+    // pub fn transpose(&self) -> MaxtrixNM {
 
-    }
+    // }
 
 }
 
