@@ -32,6 +32,14 @@ impl TriangleCollider {
         (self.centre - target).magnitude()
     }
 
+    pub fn get_points(&self) -> Matrix3 {
+        self.points
+    }
+
+    pub fn get_centre(&self) -> Vector3 {
+        self.centre
+    }
+
 }
 
 fn compute_incentre(a: Vector3, b: Vector3, c: Vector3) -> Vector3 {
