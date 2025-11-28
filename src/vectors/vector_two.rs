@@ -19,7 +19,7 @@ impl Vector2 {
     pub const ONE: Vector2 = Vector2{x: 1.0, y: 1.0};
     pub const EPSILON: Vector2 = Vector2{x: EPSILON, y: EPSILON};
 
-    pub fn new(x: f32, y: f32) -> Self {
+    pub const fn new(x: f32, y: f32) -> Self {
         Vector2 {
             x,
             y,

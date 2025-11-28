@@ -29,7 +29,7 @@ impl Matrix3 {
         z: Vector3::EPSILON,
     };
 
-    pub fn new(
+    pub const fn new(
         r0c0: f32, r0c1: f32 , r0c2: f32,
         r1c0: f32, r1c1: f32 , r1c2: f32,
         r2c0: f32, r2c1: f32 , r2c2: f32,

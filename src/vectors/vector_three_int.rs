@@ -12,7 +12,7 @@ pub struct Vector3Int {
 }
 
 impl Vector3Int {
-    pub fn new(x: i32, y: i32, z: i32) -> Self {
+    pub const fn new(x: i32, y: i32, z: i32) -> Self {
         Vector3Int {
             x, y, z
         }

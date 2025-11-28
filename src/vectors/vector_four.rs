@@ -25,7 +25,7 @@ impl Vector4 {
     pub const ONE: Vector4 = Vector4{x: 1.0, y: 1.0, z: 1.0, w: 1.0};
     pub const EPSILON: Vector4 = Vector4{x: EPSILON, y: EPSILON, z: EPSILON, w: EPSILON};
 
-    pub fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
+    pub const fn new(x: f32, y: f32, z: f32, w: f32) -> Self {
         Vector4 {
             x,
             y,

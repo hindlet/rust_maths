@@ -25,11 +25,14 @@ impl Matrix2 {
         y: Vector2::EPSILON
     };
 
-    pub fn new(
+    pub const fn new(
         r0c0: f32, r0c1: f32,
         r1c0: f32, r1c1: f32,
     ) -> Matrix2{
-        Matrix2::from_rows([r0c0, r0c1], [r1c0, r1c1])
+        Matrix2 {
+            x: Vector2::new(r0c0, r0c1),
+            y: Vector2::new(r1c0, r1c1)
+        }
     }
 
     pub fn from_rows(

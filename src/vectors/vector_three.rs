@@ -32,7 +32,7 @@ impl Vector3 {
     pub const ONE: Vector3 = Vector3{x: 1.0, y: 1.0, z: 1.0};
     pub const EPSILON: Vector3 = Vector3{x: EPSILON, y: EPSILON, z: EPSILON};
 
-    pub fn new(x: f32, y: f32, z: f32) -> Self {
+    pub const fn new(x: f32, y: f32, z: f32) -> Self {
         Vector3 {
             x,
             y,
